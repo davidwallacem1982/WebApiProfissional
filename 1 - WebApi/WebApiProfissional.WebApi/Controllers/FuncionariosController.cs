@@ -46,23 +46,5 @@ namespace WebApiProfissional.WebApi.Controllers
                                                               pagina.TotalPages));
             return Ok(pagina);
         }
-
-        // POST api/<FuncionariosController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<FuncionariosController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<FuncionariosController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

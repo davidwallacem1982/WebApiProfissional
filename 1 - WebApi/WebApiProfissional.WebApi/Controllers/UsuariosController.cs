@@ -32,7 +32,7 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserToken>> Incluir([FromBody] NewUsuarioInput model)
+        public async Task<ActionResult<UserToken>> Register([FromBody] NewUsuarioInput model)
         {
             if (model is null)
                 return BadRequest("Dados inválidos");
@@ -58,7 +58,7 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserToken>> Selecionar([FromBody] LoginUsuarioInput model)
+        public async Task<ActionResult<UserToken>> SignIn([FromBody] LoginUsuarioInput model)
         {
             if (!await _usuario.UserExistByLoginAsync(model.Login))
                 return Unauthorized("O login é inválido");
