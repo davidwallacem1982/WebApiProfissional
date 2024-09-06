@@ -17,14 +17,41 @@ namespace WebApiProfissional.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken) : ControllerBase
+    /// <summary>
+    /// Controlador para operações relacionadas aos usuários, incluindo registro, login, atualização de senha, 
+    /// renovação de tokens e logout. Protege endpoints com autenticação e gerencia a geração e revogação de tokens.
+    /// </summary>
+    public class UsuariosController : ControllerBase
     {
-        private readonly ILogger<UsuariosController> _logger = logger;
-        private readonly IUsuarioLogic _usuario = usuario;
-        private readonly IAuthenticate _authenticate = authenticate;
-        private readonly IRefreshTokenRepository _refreshToken = refreshToken;
+        private readonly ILogger<UsuariosController> _logger;
+        private readonly IUsuarioLogic _usuario;
+        private readonly IAuthenticate _authenticate;
+        private readonly IRefreshTokenRepository _refreshToken;
 
-        // POST api/<UsuariosController>
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="UsuariosController"/> com os serviços necessários.
+        /// </summary>
+        /// <param name="logger">O logger para registrar mensagens de log.</param>
+        /// <param name="usuario">A lógica de negócios relacionada aos usuários.</param>
+        /// <param name="authenticate">O serviço de autenticação para verificar e gerar tokens.</param>
+        /// <param name="refreshToken">O repositório para manipulação dos Refresh Tokens.</param>
+        public UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken)
+        {
+            _logger = logger;
+            _usuario = usuario;
+            _authenticate = authenticate;
+            _refreshToken = refreshToken;
+        }
+
+        /// <summary>
+        /// Registra um novo usuário. Gera um Access Token e um Refresh Token após a criação do usuário.
+        /// </summary>
+        /// <param name="model">Os dados do novo usuário a serem registrados.</param>
+        /// <returns>Um <see cref="ActionResult{UserToken}"/> contendo o Access Token e o Refresh Token do novo usuário.</returns>
+        /// <response code="200">Retorna o Access Token e o Refresh Token do usuário registrado.</response>
+        /// <response code="400">Dados inválidos ou login já cadastrado.</response>
+        /// <response code="401">Não autorizado, autenticação necessária.</response>
+        /// <response code="500">Erro interno do servidor ao processar a solicitação.</response>
         [HttpPost("register")]
         [Authorize]
         [Produces(MediaTypeNames.Application.Json)]
@@ -32,7 +59,7 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserToken>> Incluir([FromBody] NewUsuarioInput model)
+        public async Task<ActionResult<UserToken>> Register([FromBody] NewUsuarioInput model)
         {
             if (model is null)
                 return BadRequest("Dados inválidos");
@@ -51,14 +78,22 @@ namespace WebApiProfissional.WebApi.Controllers
             return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
         }
 
-        // POST api/<UsuariosController>
+        /// <summary>
+        /// Realiza o login de um usuário. Gera um Access Token e um Refresh Token após a autenticação bem-sucedida.
+        /// </summary>
+        /// <param name="model">Os dados de login do usuário.</param>
+        /// <returns>Um <see cref="ActionResult{UserToken}"/> contendo o Access Token e o Refresh Token.</returns>
+        /// <response code="200">Retorna o Access Token e o Refresh Token para o usuário autenticado.</response>
+        /// <response code="400">Dados inválidos ou login/senha incorretos.</response>
+        /// <response code="401">Não autorizado, login ou senha inválidos.</response>
+        /// <response code="500">Erro interno do servidor ao processar a solicitação.</response>
         [HttpPost("sign-in")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserToken>> Selecionar([FromBody] LoginUsuarioInput model)
+        public async Task<ActionResult<UserToken>> SignIn([FromBody] LoginUsuarioInput model)
         {
             if (!await _usuario.UserExistByLoginAsync(model.Login))
                 return Unauthorized("O login é inválido");
@@ -73,6 +108,15 @@ namespace WebApiProfissional.WebApi.Controllers
             return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
         }
 
+        /// <summary>
+        /// Atualiza a senha do usuário autenticado. Gera novos tokens após a atualização bem-sucedida.
+        /// </summary>
+        /// <param name="model">Os dados para atualizar a senha.</param>
+        /// <returns>Um <see cref="ActionResult{UserToken}"/> contendo o novo Access Token e o novo Refresh Token.</returns>
+        /// <response code="200">Retorna o novo Access Token e o novo Refresh Token.</response>
+        /// <response code="400">Dados inválidos ou erro ao atualizar a senha.</response>
+        /// <response code="401">Não autorizado, usuário não tem permissão para atualizar.</response>
+        /// <response code="500">Erro interno do servidor ao processar a solicitação.</response>
         [HttpPut("change-password")]
         [Authorize]
         [Produces(MediaTypeNames.Application.Json)]
@@ -103,6 +147,15 @@ namespace WebApiProfissional.WebApi.Controllers
             return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
         }
 
+        /// <summary>
+        /// Atualiza o Refresh Token do usuário. Verifica se o Refresh Token é válido e não foi revogado.
+        /// </summary>
+        /// <param name="model">Os dados do Refresh Token.</param>
+        /// <returns>Um <see cref="IActionResult"/> contendo o novo Access Token e o novo Refresh Token.</returns>
+        /// <response code="200">Retorna o novo Access Token e o novo Refresh Token.</response>
+        /// <response code="400">Dados inválidos.</response>
+        /// <response code="401">Não autorizado, Refresh Token inválido ou revogado.</response>
+        /// <response code="500">Erro interno do servidor ao processar a solicitação.</response>
         [HttpPost("refresh-token")]
         [Authorize]
         [Produces(MediaTypeNames.Application.Json)]
@@ -147,6 +200,15 @@ namespace WebApiProfissional.WebApi.Controllers
             return (IActionResult)Results.Ok(Token);
         }
 
+        /// <summary>
+        /// Atualiza o Refresh Token do usuário usando o banco de dados. Verifica se o Refresh Token é válido e não foi revogado.
+        /// </summary>
+        /// <param name="model">Os dados do Refresh Token.</param>
+        /// <returns>Um <see cref="ActionResult{UserToken}"/> contendo o novo Access Token e o novo Refresh Token.</returns>
+        /// <response code="200">Retorna o novo Access Token e o novo Refresh Token.</response>
+        /// <response code="400">Dados inválidos.</response>
+        /// <response code="401">Não autorizado, Refresh Token inválido ou revogado.</response>
+        /// <response code="500">Erro interno do servidor ao processar a solicitação.</response>
         [HttpPost("refresh-token-data-base")]
         [Authorize]
         [Produces(MediaTypeNames.Application.Json)]
@@ -189,7 +251,15 @@ namespace WebApiProfissional.WebApi.Controllers
             return new UserToken(newAccessToken, newRefreshToken, usuario.IsAdmin);
         }
 
-
+        /// <summary>
+        /// Realiza o logout do usuário autenticado revogando o Refresh Token fornecido.
+        /// </summary>
+        /// <param name="model">Os dados do Refresh Token para revogação.</param>
+        /// <returns>Um <see cref="IActionResult"/> indicando sucesso no logout.</returns>
+        /// <response code="200">Logout realizado com sucesso.</response>
+        /// <response code="400">Dados inválidos.</response>
+        /// <response code="401">Não autorizado, Refresh Token inválido.</response>
+        /// <response code="500">Erro interno do servidor ao processar a solicitação.</response>
         [HttpPost("logout")]
         [Authorize]
         [Produces(MediaTypeNames.Application.Json)]
@@ -207,7 +277,5 @@ namespace WebApiProfissional.WebApi.Controllers
 
             return Ok("Logout realizado com sucesso.");
         }
-
-
     }
 }

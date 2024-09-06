@@ -12,12 +12,11 @@ namespace WebApiProfissional.WebApi.Configurations
     public static class Authentication
     {
         /// <summary>
-        /// Registra o contexto do banco de dados "IntegrationContext" e configurando-o para usar o MySQL
-        /// com a string de conexão chamada de "MySQLConnection"
+        /// Configura a autenticação para a aplicação usando JWT (JSON Web Token).
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configuration"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="services">A coleção de serviços onde a configuração de autenticação será registrada.</param>
+        /// <param name="configuration">A configuração da aplicação que fornece as informações necessárias para configurar o JWT.</param>
+        /// <exception cref="ArgumentNullException">Lançado quando a coleção de serviços é nula.</exception>
         public static void AddAuthenticationConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
@@ -42,7 +41,8 @@ namespace WebApiProfissional.WebApi.Configurations
                         Encoding.UTF8.GetBytes(configuration["jwt:secretKey"])),
                     ClockSkew = TimeSpan.Zero
                 };
-                //Essa linha abaixo gerar mensagem de erro personalizada para o usuário, quer dizer que ele não está logado
+
+                // Configura uma mensagem de erro personalizada quando o usuário não está autorizado
                 option.Events = new JwtBearerEvents
                 {
                     OnChallenge = context =>
@@ -50,7 +50,7 @@ namespace WebApiProfissional.WebApi.Configurations
                         // Intercepta a resposta de erro padrão
                         context.HandleResponse();
 
-                        // Crie uma mensagem de erro personalizada
+                        // Cria uma mensagem de erro personalizada
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "application/json";
 
@@ -65,4 +65,5 @@ namespace WebApiProfissional.WebApi.Configurations
             });
         }
     }
+
 }

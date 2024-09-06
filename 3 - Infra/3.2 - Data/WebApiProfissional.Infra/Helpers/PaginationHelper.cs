@@ -9,23 +9,23 @@ using System.Threading.Tasks;
 
 namespace WebApiProfissional.Infra.Helpers
 {
+    /// <summary>
+    /// Classe auxiliar estática responsável por criar uma lista paginada de itens de forma assíncrona.
+    /// Esta classe utiliza duas tarefas paralelas para otimizar o processo de paginação, melhorando o 
+    /// desempenho ao evitar consultas duplicadas ao banco de dados.
+    /// </summary>
     public static class PaginationHelper
     {
         /// <summary>
-        /// Criamos duas tarefas assíncronas para obter o total de itens (countTask) e os itens da página 
-        /// atual (itemsTask).
-        ///Usamos Task.WhenAll para esperar que ambas as tarefas sejam concluídas de forma paralela.
-        ///Em seguida, obtemos o resultado das tarefas assíncronas.
-        ///Assim, criamos e retornamos um novo objeto PagedList<T> com os itens e as informações de 
-        ///paginação.Essa abordagem evita múltiplas execuções de consulta ao banco de dados, o que pode 
-        ///melhorar significativamente o desempenho, especialmente em cenários onde o acesso ao banco de 
-        ///dados é a parte mais lenta da operação.
+        /// Cria de forma assíncrona uma lista paginada de itens a partir de uma fonte de dados <see cref="IQueryable{T}"/>.
+        /// Executa em paralelo a contagem total de itens e a consulta dos itens da página atual, 
+        /// retornando um objeto <see cref="PagedList{T}"/> com as informações de paginação.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="pageNumber"></param>
-        /// <param name="pageSize"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">O tipo de dados que está sendo paginado.</typeparam>
+        /// <param name="source">A consulta <see cref="IQueryable{T}"/> que será paginada.</param>
+        /// <param name="pageNumber">O número da página a ser retornada.</param>
+        /// <param name="pageSize">O número de itens por página.</param>
+        /// <returns>Um objeto <see cref="PagedList{T}"/> contendo os itens da página solicitada e informações de paginação.</returns>
         public static async Task<PagedList<T>> CreateAsync<T>(IQueryable<T> source, int pageNumber, int pageSize) where T : class
         {
             var count = await source.CountAsync();
@@ -33,4 +33,5 @@ namespace WebApiProfissional.Infra.Helpers
             return new PagedList<T>(itens, pageNumber, pageSize, count);
         }
     }
+
 }
