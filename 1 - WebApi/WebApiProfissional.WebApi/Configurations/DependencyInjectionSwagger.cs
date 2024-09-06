@@ -1,5 +1,4 @@
-﻿using WebApiProfissional.CrossCutting.IoC.NativeInjector;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Reflection;
@@ -9,15 +8,15 @@ namespace WebApiProfissional.WebApi.Configurations
     public static class DependencyInjectionSwagger
     {
         /// <summary>
-        ///  Essa class serve como um ponto central para a configuração da injeção de dependência na aplicação, 
-        ///  configura a geração de documentação Swagger para a API, incluindo detalhes sobre segurança
-        ///  relacionados ao uso de tokens JWT (JSON Web Token)
+        /// Configura o Swagger para a aplicação, adicionando definições de segurança e documentação.
         /// </summary>
-        /// <param name="services"></param>
+        /// <param name="services">A coleção de serviços onde o Swagger será adicionado.</param>
+        /// <returns>A coleção de serviços com o Swagger configurado.</returns>
         public static IServiceCollection AddInfraStrutureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
+                // Configura a definição de segurança para a autenticação JWT
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Description = "Insira o token JWT desta maneira: Bearer {seu token}",
@@ -28,35 +27,37 @@ namespace WebApiProfissional.WebApi.Configurations
                     Type = SecuritySchemeType.ApiKey
                 });
 
+                // Adiciona a exigência de segurança para as APIs
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
                 {
+                    new OpenApiSecurityScheme()
                     {
-                        new OpenApiSecurityScheme()
+                        Reference = new OpenApiReference()
                         {
-                            Reference = new OpenApiReference()
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] {}
-                    }
-                });
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
+                }
+            });
 
+                // Configura as informações da documentação do Swagger
                 c.SwaggerDoc(
                     "webapi-profissional",
                     new OpenApiInfo
                     {
                         Title = "Projeto WebApi Profissional",
                         Version = Assembly.GetExecutingAssembly().GetName().Version.ToString(),
-                        Description = "Usando o Swagger para criar a API do WebApiProfissional.",                        
+                        Description = "Usando o Swagger para criar a API do WebApiProfissional.",
                         Contact = new OpenApiContact
                         {
                             Name = "David Wallace Marques Ferreira",
                             Email = "davidwallacem@hotmail.com"
                         },
                         License = new OpenApiLicense { Name = "The MIT License ®", Url = new Uri("https://opensource.org/licenses/MIT") }
-                    });          
+                    });
             });
 
             return services;

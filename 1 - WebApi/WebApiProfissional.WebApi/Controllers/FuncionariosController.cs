@@ -16,12 +16,22 @@ namespace WebApiProfissional.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    /// <summary>
+    /// Controlador para operações relacionadas aos funcionários. Fornece um endpoint para recuperar uma lista
+    /// paginada de funcionários.
+    /// </summary>
     public class FuncionariosController : ControllerBase
     {
         private readonly ILogger<FuncionariosController> _logger;
         private readonly IFuncionariosLogic _funcionario;
         private readonly IAuthenticate _authenticate;
 
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="FuncionariosController"/> com os serviços necessários.
+        /// </summary>
+        /// <param name="logger">O logger para registrar mensagens de log.</param>
+        /// <param name="funcionario">A lógica de negócios relacionada aos funcionários.</param>
+        /// <param name="authenticate">O serviço de autenticação para verificar a identidade dos usuários.</param>
         public FuncionariosController(ILogger<FuncionariosController> logger, IFuncionariosLogic funcionario, IAuthenticate authenticate)
         {
             _logger = logger;
@@ -29,7 +39,17 @@ namespace WebApiProfissional.WebApi.Controllers
             _authenticate = authenticate;
         }
 
-        // GET api/<FuncionariosController>/5
+        /// <summary>
+        /// Obtém uma lista paginada de funcionários. Este método é protegido por autenticação e retorna a lista de funcionários
+        /// com base nos parâmetros de paginação fornecidos na consulta. Também adiciona um cabeçalho de paginação à resposta
+        /// para fornecer informações sobre a paginação dos dados.
+        /// </summary>
+        /// <param name="paginationParams">Os parâmetros de paginação, incluindo o número da página e o tamanho da página.</param>
+        /// <returns>Um <see cref="IActionResult"/> contendo a lista paginada de funcionários.</returns>
+        /// <response code="200">Retorna a lista paginada de funcionários.</response>
+        /// <response code="400">Requisição inválida devido a parâmetros incorretos.</response>
+        /// <response code="401">Não autorizado, autenticação necessária.</response>
+        /// <response code="500">Erro interno do servidor ao processar a solicitação.</response>
         [HttpGet]
         [Authorize]
         [Produces(MediaTypeNames.Application.Json)]
@@ -37,32 +57,15 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PaginarFuncionarios([FromQuery]PaginationParams paginationParams)
+        public async Task<IActionResult> PaginarFuncionarios([FromQuery] PaginationParams paginationParams)
         {
-            var pagina = await _funcionario.PaginarFuncionariosAsync(paginationParams.PageNumber, paginationParams.PageSize); ;
-            Response.AddPaginationHeader(new PaginationHeader(pagina.CurrentPage, 
-                                                              pagina.PageSize, 
-                                                              pagina.TotalCount, 
+            var pagina = await _funcionario.PaginarFuncionariosAsync(paginationParams.PageNumber, paginationParams.PageSize);
+            Response.AddPaginationHeader(new PaginationHeader(pagina.CurrentPage,
+                                                              pagina.PageSize,
+                                                              pagina.TotalCount,
                                                               pagina.TotalPages));
             return Ok(pagina);
         }
-
-        // POST api/<FuncionariosController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<FuncionariosController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<FuncionariosController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
+
 }
