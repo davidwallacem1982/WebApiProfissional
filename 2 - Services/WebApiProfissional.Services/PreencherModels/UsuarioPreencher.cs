@@ -42,7 +42,7 @@ namespace WebApiProfissional.Services.PreencherModels
         public static NewUsuarioInput NewUsuarioInputWithUsuario(Usuarios model)
         {
             // Mapeia as propriedades do objeto de usuário para um novo modelo de entrada.
-            var usuario = new NewUsuarioInput(model.Id, model.Login, model.PasswordHash.ToString(), model.IdFuncionario);
+            var usuario = new NewUsuarioInput(model.Login, model.PasswordHash.ToString(), model.IsAdmin, model.IdFuncionario);
 
             return usuario;
         }

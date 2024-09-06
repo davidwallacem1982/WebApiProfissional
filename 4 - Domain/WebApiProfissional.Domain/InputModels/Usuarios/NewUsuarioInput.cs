@@ -6,17 +6,11 @@
     /// <remarks>
     /// Inicializa uma nova instância da classe <see cref="NewUsuarioInput"/> com os parâmetros fornecidos.
     /// </remarks>
-    /// <param name="Id">O identificador do usuário.</param>
     /// <param name="Login">O login do usuário.</param>
     /// <param name="Password">A senha do usuário.</param>
     /// <param name="IdFuncionario">O identificador do funcionário associado ao usuário.</param>
-    public class NewUsuarioInput(int Id, string Login, string Password, int IdFuncionario)
+    public class NewUsuarioInput(string Login, string Password, bool IsAdmin, int IdFuncionario)
     {
-        /// <summary>
-        /// Obtém ou define o identificador do usuário.
-        /// </summary>
-        public int Id { get; set; } = Id;
-
         /// <summary>
         /// Obtém ou define o login do usuário.
         /// </summary>
@@ -26,6 +20,11 @@
         /// Obtém ou define a senha do usuário.
         /// </summary>
         public string Password { get; set; } = Password;
+
+        /// <summary>
+        /// Obtém ou define se usuário o é administrador ou não.
+        /// </summary>
+        public bool IsAdmin { get; set; } = IsAdmin;
 
         /// <summary>
         /// Obtém ou define o identificador do funcionário associado ao usuário.
