@@ -7,12 +7,10 @@ namespace WebApiProfissional.WebApi.Configurations
     public static class DependencyInjectionConfig
     {
         /// <summary>
-        ///  Essa class serve como um ponto central para a configuração da injeção de dependência na aplicação, 
-        ///  encapsulando as chamadas específicas para os métodos RegisterServices dos todas as class 
-        ///  NativeInjector. 
+        /// Configura a injeção de dependência para a aplicação, registrando serviços de infraestrutura, lógica e repositórios.
         /// </summary>
-        /// <param name="services"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="services">A coleção de serviços onde os serviços serão registrados.</param>
+        /// <exception cref="ArgumentNullException">Lançado quando a coleção de serviços é nula.</exception>
         public static void AddDependencyInjectionConfiguration(this IServiceCollection services)
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
@@ -21,4 +19,5 @@ namespace WebApiProfissional.WebApi.Configurations
             NativeInjectorRepository.RegisterServices(services);
         }
     }
+
 }
