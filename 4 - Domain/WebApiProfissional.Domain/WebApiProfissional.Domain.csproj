@@ -29,11 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validation\" />
+    <ProjectReference Include="..\4.1 - Tools\WebApiProfissional.Utils\WebApiProfissional.Utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\4.1 - Tools\WebApiProfissional.Utils\WebApiProfissional.Utils.csproj" />
+    <Folder Include="Validation\" />
   </ItemGroup>
 
 </Project>
