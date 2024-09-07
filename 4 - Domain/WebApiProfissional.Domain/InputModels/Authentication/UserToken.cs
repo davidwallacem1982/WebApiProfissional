@@ -1,4 +1,4 @@
-﻿namespace WebApiProfissional.Domain.InputModels.User
+﻿namespace WebApiProfissional.Domain.InputModels.Authentication
 {
     /// <summary>
     /// Representa um modelo que encapsula os tokens de acesso e de atualização, juntamente com uma indicação se o usuário é administrador.

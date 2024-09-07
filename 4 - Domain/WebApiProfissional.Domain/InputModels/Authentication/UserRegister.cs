@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApiProfissional.Domain.InputModels.User
+namespace WebApiProfissional.Domain.InputModels.Authentication
 {
     public class UserRegister(int Id, string Email, string Password, string ConfirmPassword, int IdFuncionario)
     {
