@@ -16,23 +16,37 @@ namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
         {
             #region Domain
 
-            // Adiciona o repositório de funcionários ao contêiner de injeção de dependência.
-            // Scoped garante que uma nova instância seja criada para cada solicitação HTTP.
+            /// <summary>
+            /// Registra o repositório de funcionários no contêiner de injeção de dependência.
+            /// O repositório <see cref="IFuncionariosRepository"/> será implementado pela classe <see cref="FuncionariosRepository"/>.
+            /// A configuração <c>Scoped</c> garante que uma nova instância do repositório seja criada para cada solicitação HTTP.
+            /// Este repositório gerencia todas as operações relacionadas à persistência de dados de funcionários.
+            /// </summary>
             services.AddScoped<IFuncionariosRepository, FuncionariosRepository>();
 
-            // Adiciona o repositório de usuários ao contêiner de injeção de dependência.
-            // Este repositório será utilizado para lidar com as operações de persistência de usuários.
+            /// <summary>
+            /// Registra o repositório de usuários no contêiner de injeção de dependência.
+            /// O repositório <see cref="IUsuarioRepository"/> será implementado pela classe <see cref="UsuarioRepository"/>.
+            /// Ele é responsável por gerenciar as operações de persistência relacionadas aos usuários.
+            /// </summary>
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
-            // Adiciona o repositório de tokens de atualização (Refresh Tokens) ao contêiner.
-            // Este repositório será usado para armazenar e gerenciar tokens de atualização.
+            /// <summary>
+            /// Registra o repositório de tokens de atualização (Refresh Tokens) no contêiner de injeção de dependência.
+            /// O repositório <see cref="IRefreshTokenRepository"/> será implementado pela classe <see cref="RefreshTokenRepository"/>.
+            /// Esse repositório armazena e gerencia os tokens de atualização gerados para os usuários.
+            /// </summary>
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
-            // Adiciona o repositório de tokens revogados ao contêiner de injeção de dependência.
-            // Este repositório gerencia os tokens revogados para evitar o uso de tokens inválidos.
+            /// <summary>
+            /// Registra o repositório de tokens revogados no contêiner de injeção de dependência.
+            /// O repositório <see cref="IRevokedTokenRepository"/> será implementado pela classe <see cref="RevokedTokenRepository"/>.
+            /// Ele é utilizado para gerenciar os tokens revogados, impedindo que tokens inválidos ou revogados sejam reutilizados no sistema.
+            /// </summary>
             services.AddScoped<IRevokedTokenRepository, RevokedTokenRepository>();
 
             #endregion
+
         }
     }
 

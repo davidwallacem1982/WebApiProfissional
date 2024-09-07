@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApiProfissional.Domain.InputModels.User
+namespace WebApiProfissional.Domain.InputModels.Authentication
 {
     /// <summary>
     /// Representa a entrada necessária para o processo de logout.

@@ -1,14 +1,16 @@
-﻿using WebApiProfissional.Domain.Entities;
-using WebApiProfissional.Domain.Interfaces.Logic;
-using WebApiProfissional.Domain.Interfaces.Services;
-using WebApiProfissional.Domain.Pagination;
-using WebApiProfissional.Domain.ViewModels.DropDown;
-using WebApiProfissional.Utils;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApiProfissional.Domain.Entities;
+using WebApiProfissional.Domain.InputModels.Funcionarios;
+using WebApiProfissional.Domain.Interfaces.Logic;
+using WebApiProfissional.Domain.Interfaces.Services;
+using WebApiProfissional.Domain.Pagination;
+using WebApiProfissional.Domain.ViewModels.DropDown;
+using WebApiProfissional.Services.PreencherModels;
+using WebApiProfissional.Utils;
 
 namespace WebApiProfissional.Services.Logic
 {
@@ -108,6 +110,14 @@ namespace WebApiProfissional.Services.Logic
                 _logger.LogError(Util.ExceptionService(ex.Message, ex.StackTrace));
                 throw new Exception(Util.ExceptionService(ex.Message, ex.StackTrace));
             }
+        }
+
+        public async Task<bool> GetFuncionarioExistByCpfAsync(long cpf) => await _funcionarios.SelectFuncionarioExistByCpfAsync(cpf);
+
+        public async Task<Funcionarios> IncluirFuncionarioAsync(NewFuncionarioInput model)
+        {
+            var usuario = FuncionarioPreencher.NewFuncionarioInputWithUsuario(model);
+            return await _funcionarios.InsertFuncionarioAsync(usuario);
         }
     }
 }
