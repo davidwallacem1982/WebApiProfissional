@@ -81,7 +81,11 @@ namespace WebApiProfissional.WebApi
             // Adiciona as configurações de injeção de dependência customizadas.
             services.AddDependencyInjectionConfiguration();
             // ===================================================================================================== //
-            
+
+            // Registra o serviço IHttpContextAccessor, permitindo acesso ao HttpContext atual em serviços ou classes
+            // fora do pipeline de controle do ASP.NET Core (como em classes de serviço ou repositórios).
+            services.AddHttpContextAccessor();
+
             //======================================================Swagger============================================================================//
             //Isso aqui é uma outra forma de fazer a documentaçã do Swagger
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -134,8 +138,8 @@ namespace WebApiProfissional.WebApi
 
             // Explicação da ordem: UseAuthentication precede UseAuthorization no pipeline
             // Isso garante que a autenticação seja executada antes da autorização.
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseAuthentication(); // Necessário para usar autenticação
+            app.UseAuthorization();  // Necessário para usar autorização
 
             // Configura os endpoints da aplicação para mapear controladores.
             app.UseEndpoints(endpoints =>

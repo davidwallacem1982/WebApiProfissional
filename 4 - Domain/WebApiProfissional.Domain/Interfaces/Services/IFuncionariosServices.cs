@@ -72,5 +72,9 @@ namespace WebApiProfissional.Domain.Interfaces.Services
         /// e então projeta em um formato paginado usando o número da página e o tamanho da página especificados.
         /// </remarks>
         Task<PagedList<Funcionarios>> PaginationFuncionariosAsync(int pageNumber, int pageSize);
+
+        Task<bool> SelectFuncionarioExistByCpfAsync(long cpf);
+
+        Task<Funcionarios> InsertFuncionarioAsync(Funcionarios entity);
     }
 }

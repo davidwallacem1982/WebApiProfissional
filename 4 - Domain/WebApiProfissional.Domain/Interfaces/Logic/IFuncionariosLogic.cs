@@ -3,6 +3,7 @@ using WebApiProfissional.Domain.Pagination;
 using WebApiProfissional.Domain.ViewModels.DropDown;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApiProfissional.Domain.InputModels.Funcionarios;
 
 namespace WebApiProfissional.Domain.Interfaces.Logic
 {
@@ -33,5 +34,9 @@ namespace WebApiProfissional.Domain.Interfaces.Logic
         /// <returns>Uma tarefa que representa a operação assíncrona, contendo uma instância de <see cref="PagedList{Funcionarios}"/> com a lista paginada de funcionários.</returns>
         /// <exception cref="Exception">Lança uma exceção com detalhes se ocorrer um erro durante a paginação.</exception>
         Task<PagedList<Funcionarios>> PaginarFuncionariosAsync(int pageNumber, int pageSize);
+
+        Task<bool> GetFuncionarioExistByCpfAsync(long cpf);
+
+        Task<Funcionarios> IncluirFuncionarioAsync(NewFuncionarioInput model);
     }
 }

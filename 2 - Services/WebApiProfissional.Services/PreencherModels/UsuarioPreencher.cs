@@ -34,20 +34,6 @@ namespace WebApiProfissional.Services.PreencherModels
         }
 
         /// <summary>
-        /// Constrói um objeto <see cref="NewUsuarioInput"/> a partir de um modelo <see cref="Usuarios"/>.
-        /// Este método é útil para mapear as propriedades de um usuário existente para um novo modelo de entrada.
-        /// </summary>
-        /// <param name="model">O modelo <see cref="Usuarios"/> contendo as informações do usuário.</param>
-        /// <returns>Um objeto <see cref="NewUsuarioInput"/> com as informações mapeadas a partir do usuário existente.</returns>
-        public static NewUsuarioInput NewUsuarioInputWithUsuario(Usuarios model)
-        {
-            // Mapeia as propriedades do objeto de usuário para um novo modelo de entrada.
-            var usuario = new NewUsuarioInput(model.Login, model.PasswordHash.ToString(), model.IsAdmin, model.IdFuncionario);
-
-            return usuario;
-        }
-
-        /// <summary>
         /// Atualiza um objeto <see cref="Usuarios"/> com uma nova senha.
         /// Este método gera um novo hash e salt para a senha e atualiza as propriedades do usuário.
         /// </summary>

@@ -3,6 +3,7 @@ using WebApiProfissional.Domain.Interfaces.Services;
 using WebApiProfissional.Infra.Identity;
 using WebApiProfissional.Infra.Services;
 using Microsoft.Extensions.DependencyInjection;
+using WebApiProfissional.WebApi.Configurations;
 
 namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
 {
@@ -16,28 +17,47 @@ namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
     /// <param name="services">O contêiner de serviços onde os serviços de infraestrutura serão registrados.</param>
     public static void RegisterServices(IServiceCollection services)
     {
-        #region Services
+            #region Services
 
-        // Adiciona o serviço relacionado a funcionários no contêiner de injeção de dependência.
-        // Este serviço será responsável pela comunicação entre a lógica de negócios e as operações de infraestrutura, 
-        // como a comunicação com APIs externas ou manipulação de dados externos.
-        services.AddScoped<IFuncionariosServices, FuncionariosServices>();
+            /// <summary>
+            /// Registra o serviço de funcionários no contêiner de injeção de dependência.
+            /// <see cref="IFuncionariosServices"/> será implementado pela classe <see cref="FuncionariosServices"/>.
+            /// Esse serviço é responsável pela intermediação entre a lógica de negócios de funcionários
+            /// e as operações de infraestrutura, como a comunicação com APIs externas ou manipulação de dados externos.
+            /// </summary>
+            services.AddScoped<IFuncionariosServices, FuncionariosServices>();
 
-        // Adiciona o serviço relacionado a usuários no contêiner de injeção de dependência.
-        // Assim como o serviço de funcionários, ele é responsável por intermediar entre a lógica de negócios 
-        // e as operações de infraestrutura para usuários.
-        services.AddScoped<IUsuarioServices, UsuarioServices>();
+            /// <summary>
+            /// Registra o serviço de usuários no contêiner de injeção de dependência.
+            /// <see cref="IUsuarioServices"/> será implementado pela classe <see cref="UsuarioServices"/>.
+            /// Similar ao serviço de funcionários, esse serviço é responsável pela intermediação entre a lógica de negócios 
+            /// de usuários e as operações de infraestrutura, como manipulação de dados ou comunicação com outros serviços.
+            /// </summary>
+            services.AddScoped<IUsuarioServices, UsuarioServices>();
 
-        #endregion
+            #endregion
 
-        #region Identity
+            #region Identity
 
-        // Adiciona o serviço de autenticação no contêiner de injeção de dependência.
-        // Este serviço será responsável por toda a lógica de autenticação e autorização do sistema,
-        // implementando a interface IAuthenticate, que define as operações relacionadas à autenticação.
-        services.AddScoped<IAuthenticate, AuthenticateService>();
+            /// <summary>
+            /// Registra o serviço de autenticação no contêiner de injeção de dependência.
+            /// <see cref="IAuthenticate"/> será implementado pela classe <see cref="AuthenticateService"/>.
+            /// Este serviço gerencia a lógica de autenticação e autorização, incluindo a validação de credenciais e a 
+            /// geração de tokens JWT usados no sistema.
+            /// </summary>
+            services.AddScoped<IAuthenticate, AuthenticateService>();
 
-        #endregion
+            /// <summary>
+            /// Registra a implementação da interface <see cref="IAuthorized"/> como um serviço de escopo (<see cref="ServiceLifetime.Scoped"/>).
+            /// A classe <see cref="Authorized"/> será injetada sempre que <see cref="IAuthorized"/> for solicitado.
+            /// </summary>
+            /// <remarks>
+            /// O tempo de vida Scoped significa que uma nova instância de <see cref="Authorized"/> será criada para cada solicitação HTTP.
+            /// Isso garante que os dados relacionados ao contexto do usuário, como claims de autenticação, sejam gerenciados de forma correta em cada requisição.
+            /// </remarks>
+            services.AddScoped<IAuthorized, Authorized>();
+
+            #endregion
     }
 }
 

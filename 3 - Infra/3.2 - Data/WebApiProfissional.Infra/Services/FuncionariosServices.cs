@@ -122,5 +122,44 @@ namespace WebApiProfissional.Infra.Services
                 throw new Exception(Util.ExceptionService(ex.Message, ex.StackTrace));
             }            
         }
+
+        public async Task<bool> SelectFuncionarioExistByCpfAsync(long cpf)
+        {
+            try
+            {
+                _logger.LogInformation("SelectFuncionarioExistByLoginAsync no Banco - Inicio");
+
+                var result = await _funcionarios.ExistAsync(u => u.Cpf == cpf);
+
+                _logger.LogInformation($"O SelectFuncionarioExistByLoginAsync foi concluído - Select no Banco - Fim");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Util.ExceptionService(ex.Message, ex.StackTrace));
+                throw new Exception(Util.ExceptionService(ex.Message, ex.StackTrace));
+            }
+        }
+
+        public async Task<Funcionarios> InsertFuncionarioAsync(Funcionarios entity)
+        {
+
+            try
+            {
+                _logger.LogInformation("InsertFuncionarioAsync no Banco - Inicio");
+
+                _funcionarios.Add(entity);
+                await _funcionarios.SaveChangesAsync();
+
+                _logger.LogInformation($"O InsertFuncionarioAsync foi concluído - Select no Banco - Fim");
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Util.ExceptionService(ex.Message, ex.StackTrace));
+                throw new Exception(Util.ExceptionService(ex.Message, ex.StackTrace));
+            }
+
+        }
     }
 }
