@@ -47,6 +47,7 @@ A aplicação utiliza um banco de dados MySQL. Configure a string de conexão no
   "MySQLConnection": "Server=localhost;Database=seuBanco;User=usuario;Password=suaSenha;"
 }
 ```
+## download do MySQL Community Downloads  (https://dev.mysql.com/downloads/workbench/)
 
 ## Configuração de JWT
 
