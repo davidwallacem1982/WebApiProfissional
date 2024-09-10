@@ -80,6 +80,8 @@ namespace WebApiProfissional.WebApi
 
             // Adiciona as configurações de injeção de dependência customizadas.
             services.AddDependencyInjectionConfiguration();
+
+            services.AddFluentValidationConfiguration();
             // ===================================================================================================== //
 
             // Registra o serviço IHttpContextAccessor, permitindo acesso ao HttpContext atual em serviços ou classes
