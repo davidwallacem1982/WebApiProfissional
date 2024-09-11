@@ -19,6 +19,24 @@ namespace WebApiProfissional.Infra.Services
             _usuario = usuario;
         }
 
+        public bool SelectExistByLogin(string login)
+        {
+            try
+            {
+                _logger.LogInformation("SelectExistByLogin no Banco - Inicio");
+
+                var result = _usuario.Exist(u => u.Login == login);
+
+                _logger.LogInformation($"O SelectExistByLogin foi concluído - Select no Banco - Fim");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Util.ExceptionService(ex.Message, ex.StackTrace));
+                throw new Exception(Util.ExceptionService(ex.Message, ex.StackTrace));
+            }
+        }
+
         public async Task<bool> SelectExistByLoginAsync(string login)
         {
             try

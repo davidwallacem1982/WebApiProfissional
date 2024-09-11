@@ -73,8 +73,43 @@ namespace WebApiProfissional.Domain.Interfaces.Services
         /// </remarks>
         Task<PagedList<Funcionarios>> PaginationFuncionariosAsync(int pageNumber, int pageSize);
 
+        /// <summary>
+        /// Verifica se um funcionário com o CPF fornecido já existe no banco de dados.
+        /// </summary>
+        /// <param name="cpf">CPF do funcionário a ser verificado.</param>
+        /// <returns>Retorna <c>true</c> se o funcionário existir no banco de dados; caso contrário, <c>false</c>.</returns>
+        /// <exception cref="Exception">
+        /// Lança uma exceção se ocorrer um erro durante a execução da consulta no banco de dados.
+        /// A exceção capturada será registrada e o método lançará uma nova exceção personalizada com detalhes do erro.
+        /// </exception>
+        bool SelectFuncionarioExistByCpf(long cpf);
+
+        /// <summary>
+        /// Verifica de forma assíncrona se um funcionário com o CPF fornecido já existe no banco de dados.
+        /// </summary>
+        /// <param name="cpf">CPF do funcionário a ser verificado.</param>
+        /// <returns>
+        /// Uma <see cref="Task{TResult}"/> que representa o resultado da operação assíncrona.
+        /// O valor da <see cref="Task"/> será <c>true</c> se o funcionário existir no banco de dados, caso contrário, <c>false</c>.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Lança uma exceção se ocorrer um erro durante a execução da consulta no banco de dados.
+        /// A exceção capturada será registrada e o método lançará uma nova exceção personalizada com detalhes do erro.
+        /// </exception>
         Task<bool> SelectFuncionarioExistByCpfAsync(long cpf);
 
+        /// <summary>
+        /// Insere um novo registro de funcionário no banco de dados de forma assíncrona.
+        /// </summary>
+        /// <param name="entity">Entidade <see cref="Funcionarios"/> contendo os dados do funcionário a ser inserido.</param>
+        /// <returns>
+        /// Uma <see cref="Task{Funcionarios}"/> que representa a operação assíncrona.
+        /// O valor da <see cref="Task"/> será a entidade <see cref="Funcionarios"/> inserida com sucesso no banco de dados.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Lança uma exceção se ocorrer um erro durante a inserção do funcionário no banco de dados.
+        /// A exceção capturada será registrada e o método lançará uma nova exceção personalizada com detalhes do erro.
+        /// </exception>
         Task<Funcionarios> InsertFuncionarioAsync(Funcionarios entity);
     }
 }

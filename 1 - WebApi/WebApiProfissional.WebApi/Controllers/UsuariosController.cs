@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniValidation;
+using MySqlX.XDevAPI.Common;
 using System;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using WebApiProfissional.Domain.InputModels.Authentication;
@@ -28,6 +32,7 @@ namespace WebApiProfissional.WebApi.Controllers
         private readonly IRefreshTokenRepository _refreshToken;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorized _authorized;
+        private readonly IValidator<NewUsuarioInput> _registerValidator;
 
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="UsuariosController"/> com os serviços necessários.
@@ -36,7 +41,7 @@ namespace WebApiProfissional.WebApi.Controllers
         /// <param name="usuario">A lógica de negócios relacionada aos usuários.</param>
         /// <param name="authenticate">O serviço de autenticação para verificar e gerar tokens.</param>
         /// <param name="refreshToken">O repositório para manipulação dos Refresh Tokens.</param>
-        public UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken, IHttpContextAccessor httpContextAccessor, IAuthorized authorized)
+        public UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken, IHttpContextAccessor httpContextAccessor, IAuthorized authorized, IValidator<NewUsuarioInput> registerValidator)
         {
             _logger = logger;
             _usuario = usuario;
@@ -44,6 +49,7 @@ namespace WebApiProfissional.WebApi.Controllers
             _refreshToken = refreshToken;
             _httpContextAccessor = httpContextAccessor;
             _authorized = authorized;
+            _registerValidator = registerValidator;
         }
 
         /// <summary>
@@ -64,21 +70,32 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<UserToken>> Register([FromBody] NewUsuarioInput model)
         {
-            if (model is null)
-                return BadRequest("Dados inválidos");
+            try
+            {
+                var validationResult = await _registerValidator.ValidateAsync(model);
 
-            if (await _usuario.UserExistByLoginAsync(model.Login))
+                if (validationResult.IsValid)
+                {
+                    var usuario = await _usuario.IncluirUserAsync(model);
+
+                    if (usuario is null)
+                        return BadRequest("Ocorreu um erro ao cadastrar");
+
+                    var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
+                    var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
+
+                    return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
+                }
+                else
+                {
+                    return BadRequest(validationResult.Errors.Select(e => new { e.ErrorCode, e.ErrorMessage }));
+                }
+            }
+            catch (Exception)
+            {
+
                 return BadRequest("Este Login já possui um cadastro");
-
-            var usuario = await _usuario.IncluirUserAsync(model);
-
-            if (usuario is null)
-                return BadRequest("Ocorreu um erro ao cadastrar");
-
-            var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
-            var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
-
-            return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
+            }
         }
 
         /// <summary>

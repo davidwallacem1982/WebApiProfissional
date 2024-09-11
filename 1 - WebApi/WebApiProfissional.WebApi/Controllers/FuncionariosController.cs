@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using WebApiProfissional.Domain.InputModels.Authentication;
@@ -9,6 +12,7 @@ using WebApiProfissional.Domain.InputModels.Funcionarios;
 using WebApiProfissional.Domain.Interfaces.Account;
 using WebApiProfissional.Domain.Interfaces.Logic;
 using WebApiProfissional.Domain.Models.Pagination;
+using WebApiProfissional.Utils;
 using WebApiProfissional.WebApi.Extensions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -31,6 +35,7 @@ namespace WebApiProfissional.WebApi.Controllers
         private readonly IUsuarioLogic _usuario;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorized _authorized;
+        private readonly IValidator<NewFuncionarioInput> _registerValidator;
 
         /// <summary>
         /// Construtor do controlador de funcionários.
@@ -42,7 +47,13 @@ namespace WebApiProfissional.WebApi.Controllers
         /// <param name="usuario">Serviço que lida com a lógica de negócios de usuários.</param>
         /// <param name="httpContextAccessor">Acessor do contexto HTTP, utilizado para obter informações do contexto da requisição.</param>
         /// <param name="authorized">Serviço responsável por fornecer dados do usuário autorizado.</param>
-        public FuncionariosController(ILogger<FuncionariosController> logger, IFuncionariosLogic funcionario, IAuthenticate authenticate, IUsuarioLogic usuario, IHttpContextAccessor httpContextAccessor, IAuthorized authorized)
+        public FuncionariosController(ILogger<FuncionariosController> logger,
+                                      IFuncionariosLogic funcionario,
+                                      IAuthenticate authenticate,
+                                      IUsuarioLogic usuario,
+                                      IHttpContextAccessor httpContextAccessor,
+                                      IAuthorized authorized,
+                                      IValidator<NewFuncionarioInput> registerValidator)
         {
             _logger = logger;
             _funcionario = funcionario;
@@ -50,6 +61,7 @@ namespace WebApiProfissional.WebApi.Controllers
             _usuario = usuario;
             _httpContextAccessor = httpContextAccessor;
             _authorized = authorized;
+            _registerValidator = registerValidator;
         }
 
         /// <summary>
@@ -72,30 +84,39 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<UserToken>> Register([FromBody] NewFuncionarioInput model)
         {
-            // Verifica se o modelo fornecido é nulo ou inválido
-            if (model is null)
-                return BadRequest("Dados inválidos");
+            try
+            {
+                // Verifica se o modelo fornecido é nulo ou inválido
+                if (model is null)
+                    return BadRequest("Dados inválidos");
 
-            // Verifica se o CPF já está cadastrado no sistema
-            if (await _funcionario.GetFuncionarioExistByCpfAsync(model.Cpf))
-                return BadRequest("Este Cpf já possui um cadastro");
+                var validationResult = await _registerValidator.ValidateAsync(model);
 
-            // Realiza o cadastro do novo funcionário
-            var funcionario = await _funcionario.IncluirFuncionarioAsync(model);
+                if (validationResult.IsValid)
+                {
+                    // Realiza o cadastro do novo funcionário
+                    var funcionario = await _funcionario.IncluirFuncionarioAsync(model);
 
-            // Verifica se o cadastro foi realizado com sucesso
-            if (funcionario is null)
-                return BadRequest("Ocorreu um erro ao cadastrar");
+                    // Obtém as informações do usuário autorizado
+                    var user = _authorized.User(_usuario);
 
-            // Obtém as informações do usuário autorizado
-            var user = _authorized.User(_usuario);
+                    // Gera os tokens de acesso e de refresh para o usuário
+                    var accesToken = await _authenticate.GenerateAccesToken(user.Id, user.Login);
+                    var refreshToken = await _authenticate.GenerateRefreshToken(user.Id);
 
-            // Gera os tokens de acesso e de refresh para o usuário
-            var accesToken = await _authenticate.GenerateAccesToken(user.Id, user.Login);
-            var refreshToken = await _authenticate.GenerateRefreshToken(user.Id);
-
-            // Retorna os tokens gerados para o cliente
-            return new UserToken(accesToken, refreshToken, user.IsAdmin);
+                    // Retorna os tokens gerados para o cliente
+                    return new UserToken(accesToken, refreshToken, user.IsAdmin);
+                }
+                else
+                {
+                    return BadRequest(validationResult.Errors.Select(e => new { e.ErrorCode, e.ErrorMessage }));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Util.ExceptionService(ex.Message, ex.StackTrace));
+                throw new Exception(Util.ExceptionService(ex.Message, ex.StackTrace));
+            }
         }
 
         /// <summary>
