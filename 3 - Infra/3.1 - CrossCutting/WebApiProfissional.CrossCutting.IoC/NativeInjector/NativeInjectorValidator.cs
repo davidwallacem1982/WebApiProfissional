@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using WebApiProfissional.Domain.InputModels.Usuarios;
-using WebApiProfissional.Domain.Validation.Usuario;
+using WebApiProfissional.Domain.Validation.Usuarios;
 
 namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
 {

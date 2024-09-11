@@ -121,8 +121,8 @@
     <value>{0} é obrigatório.</value>
     <comment>Mensagem de dado obrigatório;</comment>
   </data>
-  <data name="E-mailValido" xml:space="preserve">
-    <value>{0} deve ser um endereço de e-mail válido.</value>
+  <data name="EmailValido" xml:space="preserve">
+    <value>Endereço de e-mail não é válido.</value>
     <comment>Mensagem de e-mail válido;</comment>
   </data>
   <data name="MinimoCaracteres" xml:space="preserve">

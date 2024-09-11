@@ -28,6 +28,8 @@ namespace WebApiProfissional.Services.Logic
             _usuario = usuario;
         }
 
+        public bool UserExistByLogin(string login) => _usuario.SelectExistByLogin(login);
+
         /// <summary>
         /// Verifica se um usuário existe no banco de dados com base no login fornecido.
         /// </summary>
