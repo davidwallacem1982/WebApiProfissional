@@ -32,7 +32,7 @@ namespace WebApiProfissional.WebApi.Controllers
         private readonly IRefreshTokenRepository _refreshToken;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorized _authorized;
-        private readonly IValidator<NewUsuarioInput> _newUsuarioInputValidator;
+        private readonly IValidator<NewUsuarioInput> _registerValidator;
 
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="UsuariosController"/> com os serviços necessários.
@@ -41,7 +41,7 @@ namespace WebApiProfissional.WebApi.Controllers
         /// <param name="usuario">A lógica de negócios relacionada aos usuários.</param>
         /// <param name="authenticate">O serviço de autenticação para verificar e gerar tokens.</param>
         /// <param name="refreshToken">O repositório para manipulação dos Refresh Tokens.</param>
-        public UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken, IHttpContextAccessor httpContextAccessor, IAuthorized authorized, IValidator<NewUsuarioInput> newUsuarioInputValidator)
+        public UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken, IHttpContextAccessor httpContextAccessor, IAuthorized authorized, IValidator<NewUsuarioInput> registerValidator)
         {
             _logger = logger;
             _usuario = usuario;
@@ -49,7 +49,7 @@ namespace WebApiProfissional.WebApi.Controllers
             _refreshToken = refreshToken;
             _httpContextAccessor = httpContextAccessor;
             _authorized = authorized;
-            _newUsuarioInputValidator = newUsuarioInputValidator;
+            _registerValidator = registerValidator;
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace WebApiProfissional.WebApi.Controllers
         {
             try
             {
-                var validationResult = await _newUsuarioInputValidator.ValidateAsync(model);
+                var validationResult = await _registerValidator.ValidateAsync(model);
 
                 if (validationResult.IsValid)
                 {

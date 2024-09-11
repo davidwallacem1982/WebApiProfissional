@@ -35,10 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validation\Funcionario\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Resources\Erros.Designer.cs">
       <DependentUpon>Erros.resx</DependentUpon>
       <DesignTime>True</DesignTime>

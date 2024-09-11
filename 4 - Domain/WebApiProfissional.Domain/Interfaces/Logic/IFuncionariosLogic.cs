@@ -35,8 +35,18 @@ namespace WebApiProfissional.Domain.Interfaces.Logic
         /// <exception cref="Exception">Lança uma exceção com detalhes se ocorrer um erro durante a paginação.</exception>
         Task<PagedList<Funcionarios>> PaginarFuncionariosAsync(int pageNumber, int pageSize);
 
-        Task<bool> GetFuncionarioExistByCpfAsync(long cpf);
+        /// <summary>
+        /// Verifica se um funcionário com o CPF fornecido já existe no banco de dados.
+        /// </summary>
+        /// <param name="cpf">O CPF do funcionário a ser verificado.</param>
+        /// <returns>Retorna <c>true</c> se o funcionário existir; caso contrário, retorna <c>false</c>.</returns>
+        bool GetFuncionarioExistByCpf(string cpf);
 
+        /// <summary>
+        /// Adiciona um novo funcionário ao banco de dados a partir dos dados fornecidos.
+        /// </summary>
+        /// <param name="model">Os dados do novo funcionário a ser inserido.</param>
+        /// <returns>Uma tarefa que representa a operação assíncrona. O resultado é a entidade <see cref="Funcionarios"/> inserida no banco de dados.</returns>
         Task<Funcionarios> IncluirFuncionarioAsync(NewFuncionarioInput model);
     }
 }

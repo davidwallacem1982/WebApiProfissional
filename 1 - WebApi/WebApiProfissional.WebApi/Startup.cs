@@ -69,18 +69,30 @@ namespace WebApiProfissional.WebApi
 
             // =================================== Dependency Injection ============================================ //
 
-            // Adiciona a configuração de autenticação.
+            // Adiciona a configuração de autenticação para a aplicação, utilizando as configurações
+            // especificadas no arquivo de configuração. Isso garante que os mecanismos de autenticação
+            // estejam corretamente configurados e prontos para uso na API.
             services.AddAuthenticationConfiguration(Configuration);
 
-            // Adiciona a configuração do Swagger para documentação da API.
+            // Adiciona a configuração do Swagger, que fornece documentação interativa e acessível
+            // para a API. Isso ajuda a criar uma interface gráfica para explorar e testar os endpoints
+            // da API de maneira mais eficiente.
             services.AddInfraStrutureSwagger();
 
-            // Adiciona a configuração do banco de dados.
+            // Configura a conexão com o banco de dados conforme as configurações definidas no arquivo
+            // de configuração. Isso inclui a configuração da string de conexão e outros parâmetros
+            // necessários para a integração com o banco de dados.
             services.AddDatabaseConfiguration(Configuration);
 
-            // Adiciona as configurações de injeção de dependência customizadas.
+            // Adiciona as configurações de injeção de dependência customizadas para a aplicação. Isso
+            // inclui o registro de serviços, repositórios e outras dependências específicas do projeto,
+            // garantindo que todas as dependências sejam resolvidas corretamente em tempo de execução.
             services.AddDependencyInjectionConfiguration();
 
+
+            // Configura o FluentValidation para o projeto, registrando todos os validadores
+            // definidos nos assemblies que contêm os validadores específicos. Isso garante
+            // que todas as validações sejam configuradas e estejam prontas para uso na aplicação.
             services.AddFluentValidationConfiguration();
             // ===================================================================================================== //
 

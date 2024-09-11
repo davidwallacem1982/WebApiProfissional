@@ -117,20 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CampoObrigatorio" xml:space="preserve">
+  <data name="ERR0001_CampoObrigatorio" xml:space="preserve">
     <value>{0} é obrigatório.</value>
-    <comment>Mensagem de dado obrigatório;</comment>
+    <comment>Mensagem de dado obrigatório - Code Error ERR001;</comment>
   </data>
-  <data name="EmailValido" xml:space="preserve">
+  <data name="ERR0004_EmailValido" xml:space="preserve">
     <value>Endereço de e-mail não é válido.</value>
-    <comment>Mensagem de e-mail válido;</comment>
+    <comment>Mensagem de e-mail válido - Code Error ERR004;</comment>
   </data>
-  <data name="MinimoCaracteres" xml:space="preserve">
+  <data name="ERR0003_MinimoCaracteres" xml:space="preserve">
     <value>{0} deve ter no mínimo {1} caracteres.</value>
-    <comment>Mensagem de mínimo caracteres;</comment>
+    <comment>Mensagem de mínimo caracteres - Code Error ERR003;</comment>
   </data>
-  <data name="TamanhoCampo" xml:space="preserve">
+  <data name="ERR0002_TamanhoCampo" xml:space="preserve">
     <value>{0} deve ter entre {1} e {2} caracteres.</value>
-    <comment>Mensagem de entre caracteres;</comment>
+    <comment>Mensagem de entre caracteres - Code Error ERR002;</comment>
   </data>
 </root>
