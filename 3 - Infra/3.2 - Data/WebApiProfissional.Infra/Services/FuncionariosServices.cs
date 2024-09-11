@@ -123,6 +123,24 @@ namespace WebApiProfissional.Infra.Services
             }            
         }
 
+        public bool SelectFuncionarioExistByCpf(long cpf)
+        {
+            try
+            {
+                _logger.LogInformation("SelectFuncionarioExistByCpf no Banco - Inicio");
+
+                var result = _funcionarios.Exist(u => u.Cpf == cpf);
+
+                _logger.LogInformation($"O SelectFuncionarioExistByCpf foi concluído - Select no Banco - Fim");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Util.ExceptionService(ex.Message, ex.StackTrace));
+                throw new Exception(Util.ExceptionService(ex.Message, ex.StackTrace));
+            }
+        }
+
         public async Task<bool> SelectFuncionarioExistByCpfAsync(long cpf)
         {
             try

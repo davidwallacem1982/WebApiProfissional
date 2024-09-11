@@ -7,6 +7,8 @@ namespace WebApiProfissional.Domain.Interfaces.Logic
     public interface IUsuarioLogic
     {
 
+        bool UserExistByLogin(string login);
+
         /// <summary>
         /// Verifica se um usuário existe no sistema com base no login fornecido de forma assíncrona.
         /// </summary>

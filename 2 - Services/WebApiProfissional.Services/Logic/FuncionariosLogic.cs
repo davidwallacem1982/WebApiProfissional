@@ -112,7 +112,7 @@ namespace WebApiProfissional.Services.Logic
             }
         }
 
-        public async Task<bool> GetFuncionarioExistByCpfAsync(long cpf) => await _funcionarios.SelectFuncionarioExistByCpfAsync(cpf);
+        public bool GetFuncionarioExistByCpf(string cpf) => _funcionarios.SelectFuncionarioExistByCpf(int.Parse(cpf));
 
         public async Task<Funcionarios> IncluirFuncionarioAsync(NewFuncionarioInput model)
         {

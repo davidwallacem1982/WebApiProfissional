@@ -175,6 +175,20 @@ namespace WebApiProfissional.Utils
         }
 
         /// <summary>
+        /// Verifica se a data fornecida é válida. 
+        /// A data é considerada válida se não for igual a "01/01/0001" e for diferente da data atual formatada.
+        /// </summary>
+        /// <param name="date">A data em formato de string a ser validada.</param>
+        /// <returns>
+        /// Retorna <c>true</c> se a data for "01/01/0001" ou for diferente da data atual formatada; 
+        /// caso contrário, retorna <c>false</c>.
+        /// </returns>
+        public static bool ValidaDate(string date)
+        {
+            return date == "01/01/0001" || date != Util.FormatDateOrHour(DateTime.Now, 0);
+        }
+
+        /// <summary>
         /// Manipula a exceção fornecida e registra a mensagem de erro.
         /// </summary>
         /// <param name="errorMessage">A mensagem de erro a ser registrada.</param>

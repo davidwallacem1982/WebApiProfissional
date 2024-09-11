@@ -6,6 +6,8 @@ namespace WebApiProfissional.Domain.Interfaces.Services
 {
     public interface IUsuarioServices
     {
+        bool SelectExistByLogin(string login);
+
         /// <summary>
         /// Verifica assincronamente se existe um usuário no banco de dados com o login fornecido.
         /// </summary>
