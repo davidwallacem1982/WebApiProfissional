@@ -39,11 +39,8 @@ namespace WebApiProfissional.Services.Logic
         public async Task<bool> UserExistByLoginAsync(string login)
         {
             var result = await _usuario.SelectExistByLoginAsync(login);
-            
-            if (!result)
-                throw new InvalidOperationException("Login inválido");
 
-            return result;
+            return !result ? throw new InvalidOperationException("Login inválido") : result;
         }
 
         /// <summary>
@@ -62,11 +59,8 @@ namespace WebApiProfissional.Services.Logic
         {
             var result = await _usuario.SelectUserByIdAsync(id);
 
-            if (!result.IsAdmin)
-                throw new InvalidOperationException("Você não tem permissão para atualizar um usuário");
-            
-            return result;
-        } 
+            return !result.IsAdmin ? throw new InvalidOperationException("Você não tem permissão para atualizar um usuário") : result;
+        }
 
         /// <summary>
         /// Obtém um usuário com base no login fornecido.
@@ -106,10 +100,7 @@ namespace WebApiProfissional.Services.Logic
             var update = UsuarioPreencher.UsuarioToUpdate(model.Password, usuario);
             var result = await _usuario.UpdateUserAsync(update);
 
-            if (result is null)
-                throw new InvalidOperationException("Ocorreu um erro ao atualizar");
-
-            return result;
+            return result is null ? throw new InvalidOperationException("Ocorreu um erro ao atualizar") : result;
         }
     }
 
