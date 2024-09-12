@@ -31,7 +31,7 @@ namespace WebApiProfissional.WebApi.Controllers
     {
         private readonly ILogger<FuncionariosController> _logger;
         private readonly IFuncionariosLogic _funcionario;
-        private readonly IAuthenticate _authenticate;
+        private readonly IAuthenticateLogic _authenticate;
         private readonly IUsuarioLogic _usuario;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorized _authorized;
@@ -49,7 +49,7 @@ namespace WebApiProfissional.WebApi.Controllers
         /// <param name="authorized">Serviço responsável por fornecer dados do usuário autorizado.</param>
         public FuncionariosController(ILogger<FuncionariosController> logger,
                                       IFuncionariosLogic funcionario,
-                                      IAuthenticate authenticate,
+                                      IAuthenticateLogic authenticate,
                                       IUsuarioLogic usuario,
                                       IHttpContextAccessor httpContextAccessor,
                                       IAuthorized authorized,

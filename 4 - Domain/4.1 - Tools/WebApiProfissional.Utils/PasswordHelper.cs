@@ -33,7 +33,7 @@ namespace WebApiProfissional.Utils
             {
                 if (computedHash[i] != storedHash[i])
                 {
-                    return false;
+                    throw new InvalidOperationException("Senha inválido");
                 }
             }
             return true;

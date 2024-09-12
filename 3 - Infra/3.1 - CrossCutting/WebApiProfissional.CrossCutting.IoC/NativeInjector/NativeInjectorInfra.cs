@@ -1,9 +1,8 @@
 ﻿using WebApiProfissional.Domain.Interfaces.Account;
 using WebApiProfissional.Domain.Interfaces.Services;
-using WebApiProfissional.Infra.Identity;
 using WebApiProfissional.Infra.Services;
 using Microsoft.Extensions.DependencyInjection;
-using WebApiProfissional.WebApi.Configurations;
+using WebApiProfissional.Infra.Services.Identity;
 
 namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
 {
@@ -27,6 +26,9 @@ namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
             /// </summary>
             services.AddScoped<IFuncionariosServices, FuncionariosServices>();
 
+
+            services.AddScoped<IRefreshTokenServices, RefreshTokenServices>();
+
             /// <summary>
             /// Registra o serviço de usuários no contêiner de injeção de dependência.
             /// <see cref="IUsuarioServices"/> será implementado pela classe <see cref="UsuarioServices"/>.
@@ -35,17 +37,18 @@ namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
             /// </summary>
             services.AddScoped<IUsuarioServices, UsuarioServices>();
 
+
             #endregion
 
             #region Identity
 
             /// <summary>
             /// Registra o serviço de autenticação no contêiner de injeção de dependência.
-            /// <see cref="IAuthenticate"/> será implementado pela classe <see cref="AuthenticateService"/>.
+            /// <see cref="IAuthenticateService"/> será implementado pela classe <see cref="AuthenticateService"/>.
             /// Este serviço gerencia a lógica de autenticação e autorização, incluindo a validação de credenciais e a 
             /// geração de tokens JWT usados no sistema.
             /// </summary>
-            services.AddScoped<IAuthenticate, AuthenticateService>();
+            services.AddScoped<IAuthenticateService, AuthenticateService>();
 
             /// <summary>
             /// Registra a implementação da interface <see cref="IAuthorized"/> como um serviço de escopo (<see cref="ServiceLifetime.Scoped"/>).

@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniValidation;
-using MySqlX.XDevAPI.Common;
 using System;
 using System.Linq;
 using System.Net.Mime;
@@ -14,7 +12,7 @@ using WebApiProfissional.Domain.InputModels.Authentication;
 using WebApiProfissional.Domain.InputModels.Usuarios;
 using WebApiProfissional.Domain.Interfaces.Account;
 using WebApiProfissional.Domain.Interfaces.Logic;
-using WebApiProfissional.Domain.Interfaces.Repository;
+using WebApiProfissional.Utils;
 
 namespace WebApiProfissional.WebApi.Controllers
 {
@@ -28,8 +26,8 @@ namespace WebApiProfissional.WebApi.Controllers
     {
         private readonly ILogger<UsuariosController> _logger;
         private readonly IUsuarioLogic _usuario;
-        private readonly IAuthenticate _authenticate;
-        private readonly IRefreshTokenRepository _refreshToken;
+        private readonly IAuthenticateLogic _authenticate;
+        private readonly IRefreshTokenLogic _refreshToken;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorized _authorized;
         private readonly IValidator<NewUsuarioInput> _registerValidator;
@@ -40,8 +38,8 @@ namespace WebApiProfissional.WebApi.Controllers
         /// <param name="logger">O logger para registrar mensagens de log.</param>
         /// <param name="usuario">A lógica de negócios relacionada aos usuários.</param>
         /// <param name="authenticate">O serviço de autenticação para verificar e gerar tokens.</param>
-        /// <param name="refreshToken">O repositório para manipulação dos Refresh Tokens.</param>
-        public UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken, IHttpContextAccessor httpContextAccessor, IAuthorized authorized, IValidator<NewUsuarioInput> registerValidator)
+        /// <param name="refreshToken">A lógica de negócios relacionada aos Refresh Tokens.</param>
+        public UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticateLogic authenticate, IRefreshTokenLogic refreshToken, IHttpContextAccessor httpContextAccessor, IAuthorized authorized, IValidator<NewUsuarioInput> registerValidator)
         {
             _logger = logger;
             _usuario = usuario;
@@ -78,9 +76,6 @@ namespace WebApiProfissional.WebApi.Controllers
                 {
                     var usuario = await _usuario.IncluirUserAsync(model);
 
-                    if (usuario is null)
-                        return BadRequest("Ocorreu um erro ao cadastrar");
-
                     var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
                     var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
 
@@ -91,10 +86,9 @@ namespace WebApiProfissional.WebApi.Controllers
                     return BadRequest(validationResult.Errors.Select(e => new { e.ErrorCode, e.ErrorMessage }));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                return BadRequest("Este Login já possui um cadastro");
+                return BadRequest($"Erro: {ex.Message}");
             }
         }
 
@@ -115,17 +109,22 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<UserToken>> SignIn([FromBody] LoginUsuarioInput model)
         {
-            if (!await _usuario.UserExistByLoginAsync(model.Login))
-                return Unauthorized("O login é inválido");
+            try
+            {
+                await _usuario.UserExistByLoginAsync(model.Login);
 
-            if (!await _authenticate.AuthenticateUserAsync(model.Login, model.Password))
-                return Unauthorized("A senha é inválida");
+                await _authenticate.AuthenticateUserAsync(model.Login, model.Password);
 
-            var usuario = await _usuario.GetUserByLoginAsync(model.Login);
-            var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
-            var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
+                var usuario = await _usuario.GetUserByLoginAsync(model.Login);
+                var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
+                var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
 
-            return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
+                return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro: {ex.Message}");
+            }            
         }
 
         /// <summary>
@@ -151,15 +150,9 @@ namespace WebApiProfissional.WebApi.Controllers
 
             var user = _authorized.User(_usuario);
 
-            var verifica = await _usuario.GetUserByIdAsync(user.Id);
-
-            if (!verifica.IsAdmin)
-                return Unauthorized("Você não tem permissão para atualizar um usuário");
+            await _usuario.GetUserByIdAsync(user.Id);
 
             var usuario = await _usuario.AtualizarSenhaAsync(model);
-
-            if (usuario is null)
-                return BadRequest("Ocorreu um erro ao atualizar");
 
             var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
             var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
@@ -195,7 +188,7 @@ namespace WebApiProfissional.WebApi.Controllers
                 return Unauthorized("O Refresh Token foi revogado.");
 
             // Obtém o usuário associado ao RefreshToken
-            var tokenDetails = await _refreshToken.GetSingleOrDefaultAsyncBy(rt => rt.Token == model.RefreshToken);
+            var tokenDetails = await _refreshToken.GetAssociarRefreshToken(model);
 
             if (tokenDetails == null)
                 return Unauthorized("Refresh Token inválido.");
@@ -246,15 +239,9 @@ namespace WebApiProfissional.WebApi.Controllers
                 return Unauthorized("O Refresh Token foi revogado.");
 
             // Obtém o usuário associado ao RefreshToken
-            var tokenDetails = await _refreshToken.GetSingleOrDefaultAsyncBy(rt => rt.Token == model.RefreshToken);
-
-            if (tokenDetails == null)
-                return Unauthorized("Refresh Token inválido.");
+            var tokenDetails = await _refreshToken.GetAssociarRefreshToken(model);
 
             var user = _authorized.User(_usuario);
-
-            if (user == null)
-                return Unauthorized("Usuário não encontrado.");
 
             // Gera novos tokens
             var newAccessToken = await _authenticate.GenerateAccesToken(user.Id, user.Login);

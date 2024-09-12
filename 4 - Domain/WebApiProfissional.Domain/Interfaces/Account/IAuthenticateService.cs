@@ -1,22 +1,13 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Threading.Tasks;
+using WebApiProfissional.Domain.Entities;
 
 namespace WebApiProfissional.Domain.Interfaces.Account
 {
-    public interface IAuthenticate
+    public interface IAuthenticateService
     {
-
-        /// <summary>
-        /// Autentica um usuário verificando se as credenciais fornecidas (login e senha) estão corretas.
-        /// Obtém o usuário pelo login e valida a senha fornecida com base no hash e no salt armazenados.
-        /// Retorna verdadeiro se a autenticação for bem-sucedida, caso contrário, lança uma exceção se o usuário não for encontrado.
-        /// </summary>
-        /// <param name="login">id so usuário será autenticado</param>
-        /// <param name="senha">senha do usuário que será autenticado</param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        Task<bool> AuthenticateUserAsync(string login, string senha);
+        Task<Usuarios> AuthenticateUserAsync(string login, string senha);
 
         /// <summary>
         /// Cria e retorna as credenciais de assinatura para JWT.
