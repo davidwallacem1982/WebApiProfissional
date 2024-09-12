@@ -145,19 +145,26 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<UserToken>> ChangePassword([FromBody] UpdateUsuarioInput model)
         {
-            if (model is null)
-                return BadRequest("Dados inválidos");
+            try
+            {
+                if (model is null)
+                    return BadRequest("Dados inválidos");
 
-            var user = _authorized.User(_usuario);
+                var user = _authorized.User(_usuario);
 
-            await _usuario.GetUserByIdAsync(user.Id);
+                await _usuario.GetUserByIdAsync(user.Id);
 
-            var usuario = await _usuario.AtualizarSenhaAsync(model);
+                var usuario = await _usuario.AtualizarSenhaAsync(model);
 
-            var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
-            var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
+                var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
+                var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
 
-            return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
+                return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro: {ex.Message}");
+            }
         }
 
         /// <summary>
