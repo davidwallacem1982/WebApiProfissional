@@ -16,6 +16,8 @@ namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
         {
             #region Logic
 
+            services.AddScoped<IAuthenticateLogic, AuthenticateLogic>();
+
             /// <summary>
             /// Registra a lógica de negócios de funcionários no contêiner de injeção de dependência.
             /// A implementação de <see cref="IFuncionariosLogic"/> será feita pela classe <see cref="FuncionariosLogic"/>.
@@ -23,6 +25,8 @@ namespace WebApiProfissional.CrossCutting.IoC.NativeInjector
             /// cálculos e operações específicas de negócio antes de interagir com os repositórios.
             /// </summary>
             services.AddScoped<IFuncionariosLogic, FuncionariosLogic>();
+
+            services.AddScoped<IRefreshTokenLogic, RefreshTokenLogic>();
 
             /// <summary>
             /// Registra a lógica de negócios de usuários no contêiner de injeção de dependência.

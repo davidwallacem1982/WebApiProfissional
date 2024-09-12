@@ -5,6 +5,7 @@ using WebApiProfissional.Domain.Interfaces.Services;
 using WebApiProfissional.Services.PreencherModels;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using System;
 
 namespace WebApiProfissional.Services.Logic
 {
@@ -35,7 +36,15 @@ namespace WebApiProfissional.Services.Logic
         /// </summary>
         /// <param name="login">O login do usuário a ser verificado.</param>
         /// <returns>Retorna true se o usuário existir, caso contrário, false.</returns>
-        public async Task<bool> UserExistByLoginAsync(string login) => await _usuario.SelectExistByLoginAsync(login);
+        public async Task<bool> UserExistByLoginAsync(string login)
+        {
+            var result = await _usuario.SelectExistByLoginAsync(login);
+            
+            if (!result)
+                throw new InvalidOperationException("Login inválido");
+
+            return result;
+        }
 
         /// <summary>
         /// Verifica se um usuário existe no banco de dados com base no ID fornecido.
@@ -49,7 +58,15 @@ namespace WebApiProfissional.Services.Logic
         /// </summary>
         /// <param name="id">O ID do usuário a ser recuperado.</param>
         /// <returns>Retorna um objeto <see cref="Usuarios"/> se o usuário for encontrado.</returns>
-        public async Task<Usuarios> GetUserByIdAsync(int id) => await _usuario.SelectUserByIdAsync(id);
+        public async Task<Usuarios> GetUserByIdAsync(int id) 
+        {
+            var result = await _usuario.SelectUserByIdAsync(id);
+
+            if (!result.IsAdmin)
+                throw new InvalidOperationException("Você não tem permissão para atualizar um usuário");
+            
+            return result;
+        } 
 
         /// <summary>
         /// Obtém um usuário com base no login fornecido.
@@ -68,7 +85,10 @@ namespace WebApiProfissional.Services.Logic
         {
             // Preenche o objeto de usuário com as informações fornecidas no modelo de entrada.
             var usuario = UsuarioPreencher.UsuarioWithNewUsuarioInput(model);
-            return await _usuario.InsertUserAsync(usuario);
+
+            return usuario is null
+                ? throw new InvalidOperationException("Ocorreu um erro ao cadastrar")
+                : await _usuario.InsertUserAsync(usuario);
         }
 
         /// <summary>
@@ -84,7 +104,12 @@ namespace WebApiProfissional.Services.Logic
 
             // Atualiza o objeto de usuário com a nova senha.
             var update = UsuarioPreencher.UsuarioToUpdate(model.Password, usuario);
-            return await _usuario.UpdateUserAsync(update);
+            var result = await _usuario.UpdateUserAsync(update);
+
+            if (result is null)
+                throw new InvalidOperationException("Ocorreu um erro ao atualizar");
+
+            return result;
         }
     }
 

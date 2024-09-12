@@ -1,8 +1,4 @@
-﻿using WebApiProfissional.Domain.Entities.Token;
-using WebApiProfissional.Domain.Interfaces.Account;
-using WebApiProfissional.Domain.Interfaces.Repository;
-using WebApiProfissional.Utils;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -11,10 +7,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiProfissional.Domain.Entities;
+using WebApiProfissional.Domain.Entities.Token;
+using WebApiProfissional.Domain.Interfaces.Account;
+using WebApiProfissional.Domain.Interfaces.Repository;
 
-namespace WebApiProfissional.Infra.Identity
+namespace WebApiProfissional.Infra.Services.Identity
 {
-    public class AuthenticateService : IAuthenticate
+    public class AuthenticateService : IAuthenticateService
     {
         private readonly ILogger<AuthenticateService> _logger;
         private readonly IUsuarioRepository _usuario;
@@ -35,11 +35,9 @@ namespace WebApiProfissional.Infra.Identity
             _configuration = configuration;
         }
 
-        public async Task<bool> AuthenticateUserAsync(string login, string senha)
+        public async Task<Usuarios> AuthenticateUserAsync(string login, string senha)
         {
-            var usuario = await _usuario.GetSingleOrDefaultAsyncBy(u => u.Login == login) ?? throw new InvalidOperationException("O Usuário não encontrado");
-
-            return PasswordHelper.ValidarSenha(senha, usuario.PasswordHash, usuario.PasswordSalt);
+            return await _usuario.GetSingleOrDefaultAsyncBy(u => u.Login == login);
         }
 
         public SigningCredentials Credentials()
