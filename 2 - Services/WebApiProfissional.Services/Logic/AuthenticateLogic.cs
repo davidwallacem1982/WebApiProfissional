@@ -29,19 +29,22 @@ namespace WebApiProfissional.Services.Logic
             return PasswordHelper.ValidarSenha(senha, usuario.PasswordHash, usuario.PasswordSalt);
         }
 
-        public Task<string> GenerateAccesToken(int id, string login)
+        public async Task<string> GenerateAccesToken(int id, string login)
         {
-            return _authenticate.GenerateAccesToken(id, login);
+            return await _authenticate.GenerateAccesToken(id, login);
         }
 
-        public Task<string> GenerateRefreshToken(int id)
+        public async Task<string> GenerateRefreshToken(int id)
         {
-            return _authenticate.GenerateRefreshToken(id);
+            return await _authenticate.GenerateRefreshToken(id);
         }
 
-        public Task<bool> IsTokenRevoked(string token)
+        public async Task CheckIfTokenRevokedAsync(string token)
         {
-            return _authenticate.IsTokenRevoked(token);
+            if (await _authenticate.IsTokenRevoked(token).ConfigureAwait(false))
+            {
+                throw new InvalidOperationException("O Refresh Token foi revogado.");
+            }
         }
 
         public Task RevokeRefreshToken(int userId, string refreshToken)

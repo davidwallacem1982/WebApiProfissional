@@ -80,7 +80,7 @@ namespace WebApiProfissional.Domain.Interfaces.Logic
         /// </summary>
         /// <param name="token">O Token a ser verificado.</param>
         /// <returns></returns>
-        Task<bool> IsTokenRevoked(string token);
+        Task CheckIfTokenRevokedAsync(string token);
 
         /// <summary>
         /// Revoga o Refresh Token fornecido e o marca como revogado na tabela de Refresh Tokens.

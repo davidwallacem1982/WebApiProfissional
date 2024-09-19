@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using WebApiProfissional.Domain.Entities.Token;
 using WebApiProfissional.Domain.InputModels.Authentication;
 using WebApiProfissional.Domain.Interfaces.Logic;
@@ -17,7 +18,9 @@ namespace WebApiProfissional.Services.Logic
 
         public async Task<RefreshTokens> GetAssociarRefreshToken(RefreshTokenInput model)
         {
-            return await _refreshToken.SelectAssociarRefreshToken(model);
+            var tokenDetails = await _refreshToken.SelectAssociarRefreshToken(model) ?? throw new InvalidOperationException("Refresh Token inválido.");
+
+            return tokenDetails;
         }
     }
 }
