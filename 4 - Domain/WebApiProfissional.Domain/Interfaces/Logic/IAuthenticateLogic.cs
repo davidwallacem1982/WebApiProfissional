@@ -1,12 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
-namespace WebApiProfissional.Domain.Interfaces.Account
+namespace WebApiProfissional.Domain.Interfaces.Logic
 {
-    public interface IAuthenticate
+    public interface IAuthenticateLogic
     {
-
         /// <summary>
         /// Autentica um usuário verificando se as credenciais fornecidas (login e senha) estão corretas.
         /// Obtém o usuário pelo login e valida a senha fornecida com base no hash e no salt armazenados.
@@ -17,16 +15,6 @@ namespace WebApiProfissional.Domain.Interfaces.Account
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         Task<bool> AuthenticateUserAsync(string login, string senha);
-
-        /// <summary>
-        /// Cria e retorna as credenciais de assinatura para JWT.
-        /// Este método configura uma chave secreta HMAC para a assinatura de tokens JWT. 
-        /// Verifica se a chave é suficientemente longa (pelo menos 256 bits) e cria um objeto 
-        /// <see cref="SigningCredentials"/> usando a chave e o algoritmo HMAC SHA-256.
-        /// </summary>
-        /// <returns>Um objeto <see cref="SigningCredentials"/> configurado para assinatura de tokens JWT.</returns>
-        /// <exception cref="InvalidOperationException">Se a chave HMAC for menor que 256 bits.</exception>
-        SigningCredentials Credentials();
 
         /// <summary>
         /// Gera um token JWT (Access Token) para um usuário autenticado.
@@ -92,7 +80,7 @@ namespace WebApiProfissional.Domain.Interfaces.Account
         /// </summary>
         /// <param name="token">O Token a ser verificado.</param>
         /// <returns></returns>
-        Task<bool> IsTokenRevoked(string token);
+        Task CheckIfTokenRevokedAsync(string token);
 
         /// <summary>
         /// Revoga o Refresh Token fornecido e o marca como revogado na tabela de Refresh Tokens.

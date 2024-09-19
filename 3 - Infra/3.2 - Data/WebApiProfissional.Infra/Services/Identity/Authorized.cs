@@ -5,7 +5,7 @@ using WebApiProfissional.Domain.Interfaces.Account;
 using WebApiProfissional.Domain.Interfaces.Logic;
 using WebApiProfissional.Domain.ViewModels;
 
-namespace WebApiProfissional.WebApi.Configurations
+namespace WebApiProfissional.Infra.Services.Identity
 {
     /// <summary>
     /// Classe responsável por fornecer funcionalidades relacionadas ao usuário autorizado.
@@ -50,12 +50,14 @@ namespace WebApiProfissional.WebApi.Configurations
 
             var user = userTask.Result;
 
+            var userAuthorize =  new UserAuthorizedViewModel(user.Id, user.Login, user.IsAdmin);
+
             if (user == null)
             {
                 throw new InvalidOperationException("Usuário não encontrado.");
             }
 
-            return new UserAuthorizedViewModel(user.Id, user.Login, user.IsAdmin);
+            return userAuthorize;
         }
     }
 }

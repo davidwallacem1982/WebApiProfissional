@@ -31,7 +31,7 @@ namespace WebApiProfissional.WebApi.Controllers
     {
         private readonly ILogger<FuncionariosController> _logger;
         private readonly IFuncionariosLogic _funcionario;
-        private readonly IAuthenticate _authenticate;
+        private readonly IAuthenticateLogic _authenticate;
         private readonly IUsuarioLogic _usuario;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorized _authorized;
@@ -49,7 +49,7 @@ namespace WebApiProfissional.WebApi.Controllers
         /// <param name="authorized">Serviço responsável por fornecer dados do usuário autorizado.</param>
         public FuncionariosController(ILogger<FuncionariosController> logger,
                                       IFuncionariosLogic funcionario,
-                                      IAuthenticate authenticate,
+                                      IAuthenticateLogic authenticate,
                                       IUsuarioLogic usuario,
                                       IHttpContextAccessor httpContextAccessor,
                                       IAuthorized authorized,
@@ -115,7 +115,7 @@ namespace WebApiProfissional.WebApi.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(Util.ExceptionService(ex.Message, ex.StackTrace));
-                throw new Exception(Util.ExceptionService(ex.Message, ex.StackTrace));
+                return BadRequest(Util.ExceptionService(ex.Message, ex.StackTrace));
             }
         }
 
@@ -138,17 +138,29 @@ namespace WebApiProfissional.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PaginarFuncionarios([FromQuery] PaginationParams paginationParams)
         {
-            // Realiza a paginação dos funcionários com base nos parâmetros fornecidos
-            var pagina = await _funcionario.PaginarFuncionariosAsync(paginationParams.PageNumber, paginationParams.PageSize);
+            try
+            {
+                // Verifica se o modelo fornecido é nulo ou inválido
+                if (paginationParams is null)
+                    return BadRequest("Dados inválidos");
 
-            // Adiciona cabeçalho de paginação à resposta HTTP
-            Response.AddPaginationHeader(new PaginationHeader(pagina.CurrentPage,
-                                                              pagina.PageSize,
-                                                              pagina.TotalCount,
-                                                              pagina.TotalPages));
+                // Realiza a paginação dos funcionários com base nos parâmetros fornecidos
+                var pagina = await _funcionario.PaginarFuncionariosAsync(paginationParams.PageNumber, paginationParams.PageSize);
 
-            // Retorna a lista paginada de funcionários
-            return Ok(pagina);
+                // Adiciona cabeçalho de paginação à resposta HTTP
+                Response.AddPaginationHeader(new PaginationHeader(pagina.CurrentPage,
+                                                                  pagina.PageSize,
+                                                                  pagina.TotalCount,
+                                                                  pagina.TotalPages));
+
+                // Retorna a lista paginada de funcionários
+                return Ok(pagina);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Util.ExceptionService(ex.Message, ex.StackTrace));
+                return BadRequest(Util.ExceptionService(ex.Message, ex.StackTrace));
+            }
         }
     }
 
