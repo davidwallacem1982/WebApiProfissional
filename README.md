@@ -9,18 +9,19 @@ A API é construída com **ASP.NET Core .NET 8.0** e implementa uma estrutura ro
 
 - **Autenticação e Autorização:** Implementação de autenticação JWT com suporte a tokens de acesso e refresh tokens, além de tokens revogados.
 - **Gerenciamento de Funcionários:** Funcionalidades para criação, leitura e paginação de funcionários, com validação de CPF.
-- **Gerenciamento de:** Controle de usuários com criação, leitura, atualização, verificando permissões administrativas e outras funções.
+- **Gerenciamento de Usuários:** Controle de usuários com criação, leitura, atualização, verificando permissões administrativas e outras funções.
 - **Paginação e Filtragem**: Suporte para paginação de resultados e filtragem de dados.
-- - **Tokens de Acesso e Atualização**: Geração e gerenciamento de tokens JWT para acesso e atualização de dados.
+- **Tokens de Acesso e Atualização**: Geração e gerenciamento de tokens JWT para acesso e atualização de dados.
 - **Documentação com Swagger:** Documentação interativa da API utilizando Swagger, facilitando a integração e entendimento da API.
 
 ## Tecnologias Utilizadas
 
-- **ASP.NET Core .NET 8.0:** Framework principal utilizado para o desenvolvimento da API.
-- **Entity Framework Core:** ORM utilizado para comunicação com o banco de dados MySQL.
-- **JWT Authentication:** Implementação de autenticação baseada em JSON Web Tokens.
-- **Swagger:** Ferramenta para documentação e teste interativo da API.
-- **IHttpContextAccessor:** Utilizado para acessar informações do contexto HTTP atual, permitindo obter dados do usuário autenticado.
+- [**C#:**](https://learn.microsoft.com/en-us/dotnet/csharp/) Linguagem de programação principal utilizada no desenvolvimento da aplicação, permitindo a criação de código robusto, orientado a objetos e com forte tipagem.
+- [**ASP.NET Core 8:**](https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-8.0) Framework principal utilizado para o desenvolvimento da API.
+- [**Entity Framework Core 8.0:**](https://learn.microsoft.com/en-us/ef/) ORM utilizado para comunicação com o banco de dados MySQL.
+- [**JWT Authentication:**](https://jwt.io/) Implementação de autenticação baseada em JSON Web Tokens.
+- [**Swagger:**](https://swagger.io/) Ferramenta para documentação e teste interativo da API.
+- [**IHttpContextAccessor:**](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) Utilizado para acessar informações do contexto HTTP atual, permitindo obter dados do usuário autenticado.
 
 ## Configurações Iniciais
 
@@ -28,15 +29,33 @@ A API é construída com **ASP.NET Core .NET 8.0** e implementa uma estrutura ro
 
 As principais dependências do projeto são:
 
-- `Microsoft.EntityFrameworkCore`
-- `Microsoft.AspNetCore.Authentication.JwtBearer`
-- `Swashbuckle.AspNetCore`
-- `Pomelo.EntityFrameworkCore.MySql`
+- :arrow_forward:`Microsoft.EntityFrameworkCore`
+- :arrow_forward:`Microsoft.AspNetCore.Authentication.JwtBearer`
+- :arrow_forward:`Swashbuckle.AspNetCore`
+- :arrow_forward:`Pomelo.EntityFrameworkCore.MySql`
+- :arrow_forward:`Microsoft.Extensions.DependencyInjection`
+- :arrow_forward:`FluentValidation.AspNetCore`
 
+Demais dependências do projeto são:
+
+- :arrow_forward:`Microsoft.AspNetCore.Mvc.NewtonsoftJson`
+- :arrow_forward:`Serilog`
+- :arrow_forward:`Microsoft.AspNetCore.Http`
+- :arrow_forward:`Microsoft.AspNetCore.Identity`
+- :arrow_forward:`Microsoft.EntityFrameworkCore.InMemory`
+- :arrow_forward:`Mono.TextTemplating`
+- :arrow_forward:`MySqlConnector`
+- :arrow_forward:`NetDevPack.Security.Jwt.Core`
+  
 Certifique-se de restaurar as dependências do projeto antes de iniciar a API:
 
 ```bash
 dotnet restore
+```
+ou
+
+```bash
+Update-Package -reinstall
 ```
 
 ## Configuração de Banco de Dados
