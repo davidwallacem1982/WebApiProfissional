@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
-    <PackageReference Include="NPOI" Version="2.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\3 - Infra\3.2 - Data\WebApiProfissional.Infra\WebApiProfissional.Infra.csproj" />
   </ItemGroup>
 
