@@ -2,8 +2,9 @@
 
 ## Descrição
 
-`Project_WebApiProfissional_V1` é uma API desenvolvida para gerenciar operações relacionadas a funcionários e usuários em um ambiente corporativo. Este projeto é projetado para ajudar no estudo de pessoas que desejam criar APIs organizadas e objetivas, utilizando a linhagem C#.
-A API é construída com **ASP.NET Core .NET 8.0** e implementa uma estrutura robusta para autenticação e autorização, além de fornecer suporte para operações de CRUD e manipulação de dados.
+`Project_WebApiProfissional_V1` é uma API moderna desenvolvida para gerenciar operações de funcionários e usuários em ambientes corporativos, com ênfase em Clean Architecture para garantir modularidade e facilidade de manutenção. Este projeto foi criado para servir como base de estudo para desenvolvedores que desejam aprender a construir APIs bem estruturadas e objetivas com C#.
+
+A API é desenvolvida em ASP.NET Core .NET 8.0, oferecendo uma arquitetura robusta que implementa autenticação e autorização seguras. Além disso, ela suporta operações completas de CRUD e manipulação de dados, seguindo as melhores práticas para garantir escalabilidade, separação de responsabilidades e flexibilidade.
 
 ## Funcionalidades Principais
 
