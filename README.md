@@ -24,6 +24,7 @@ A API é desenvolvida em ASP.NET Core .NET 8.0, oferecendo uma arquitetura robus
 - [**Entity Framework Core 8.0:**](https://learn.microsoft.com/en-us/ef/) ORM utilizado para comunicação com o banco de dados MySQL.
 - [**JWT Authentication:**](https://jwt.io/) Implementação de autenticação baseada em JSON Web Tokens.
 - [**Swagger:**](https://swagger.io/) Ferramenta para documentação e teste interativo da API.
+- [**IHttpContextAccessor:**](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) Utilizado para acessar informações do contexto HTTP atual, permitindo obter dados do usuário autenticado.
 - [**FluentValidation:**](https://fluentvalidation.net/) Biblioteca utilizada para validação de regras de negócio no sistema de forma fluente e extensível.
 
 ## Configurações Iniciais
