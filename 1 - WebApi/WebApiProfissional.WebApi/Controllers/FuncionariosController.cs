@@ -24,45 +24,34 @@ namespace WebApiProfissional.WebApi.Controllers
     /// Contém ações para registrar novos funcionários e paginar a lista de funcionários.
     /// Requer autenticação para acessar seus métodos.
     /// </summary>
+    /// <remarks>
+    /// Construtor do controlador de funcionários.
+    /// Inicializa as dependências injetadas via DI (Dependency Injection), como lógica de negócios de funcionários, autenticação, usuário, entre outros.
+    /// </remarks>
+    /// <param name="logger">Logger para rastreamento e depuração de erros.</param>
+    /// <param name="funcionario">Serviço que lida com a lógica de negócios de funcionários.</param>
+    /// <param name="authenticate">Serviço responsável pela geração de tokens de autenticação.</param>
+    /// <param name="usuario">Serviço que lida com a lógica de negócios de usuários.</param>
+    /// <param name="httpContextAccessor">Acessor do contexto HTTP, utilizado para obter informações do contexto da requisição.</param>
+    /// <param name="authorized">Serviço responsável por fornecer dados do usuário autorizado.</param>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class FuncionariosController : ControllerBase
+    public class FuncionariosController(ILogger<FuncionariosController> logger,
+                                  IFuncionariosLogic funcionario,
+                                  IAuthenticate authenticate,
+                                  IUsuarioLogic usuario,
+                                  IHttpContextAccessor httpContextAccessor,
+                                  IAuthorized authorized,
+                                  IValidator<NewFuncionarioInput> registerValidator) : ControllerBase
     {
-        private readonly ILogger<FuncionariosController> _logger;
-        private readonly IFuncionariosLogic _funcionario;
-        private readonly IAuthenticate _authenticate;
-        private readonly IUsuarioLogic _usuario;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IAuthorized _authorized;
-        private readonly IValidator<NewFuncionarioInput> _registerValidator;
-
-        /// <summary>
-        /// Construtor do controlador de funcionários.
-        /// Inicializa as dependências injetadas via DI (Dependency Injection), como lógica de negócios de funcionários, autenticação, usuário, entre outros.
-        /// </summary>
-        /// <param name="logger">Logger para rastreamento e depuração de erros.</param>
-        /// <param name="funcionario">Serviço que lida com a lógica de negócios de funcionários.</param>
-        /// <param name="authenticate">Serviço responsável pela geração de tokens de autenticação.</param>
-        /// <param name="usuario">Serviço que lida com a lógica de negócios de usuários.</param>
-        /// <param name="httpContextAccessor">Acessor do contexto HTTP, utilizado para obter informações do contexto da requisição.</param>
-        /// <param name="authorized">Serviço responsável por fornecer dados do usuário autorizado.</param>
-        public FuncionariosController(ILogger<FuncionariosController> logger,
-                                      IFuncionariosLogic funcionario,
-                                      IAuthenticate authenticate,
-                                      IUsuarioLogic usuario,
-                                      IHttpContextAccessor httpContextAccessor,
-                                      IAuthorized authorized,
-                                      IValidator<NewFuncionarioInput> registerValidator)
-        {
-            _logger = logger;
-            _funcionario = funcionario;
-            _authenticate = authenticate;
-            _usuario = usuario;
-            _httpContextAccessor = httpContextAccessor;
-            _authorized = authorized;
-            _registerValidator = registerValidator;
-        }
+        private readonly ILogger<FuncionariosController> _logger = logger;
+        private readonly IFuncionariosLogic _funcionario = funcionario;
+        private readonly IAuthenticate _authenticate = authenticate;
+        private readonly IUsuarioLogic _usuario = usuario;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly IAuthorized _authorized = authorized;
+        private readonly IValidator<NewFuncionarioInput> _registerValidator = registerValidator;
 
         /// <summary>
         /// Registra um novo funcionário no sistema.
@@ -101,7 +90,7 @@ namespace WebApiProfissional.WebApi.Controllers
                     var user = _authorized.User(_usuario);
 
                     // Gera os tokens de acesso e de refresh para o usuário
-                    var accesToken = await _authenticate.GenerateAccesToken(user.Id, user.Login);
+                    var accesToken = await _authenticate.GenerateToken(user.Id, "at+jwt", user.Login);
                     var refreshToken = await _authenticate.GenerateRefreshToken(user.Id);
 
                     // Retorna os tokens gerados para o cliente

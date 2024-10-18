@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace WebApiProfissional.Domain.Interfaces.Account
@@ -19,16 +18,6 @@ namespace WebApiProfissional.Domain.Interfaces.Account
         Task<bool> AuthenticateUserAsync(string login, string senha);
 
         /// <summary>
-        /// Cria e retorna as credenciais de assinatura para JWT.
-        /// Este método configura uma chave secreta HMAC para a assinatura de tokens JWT. 
-        /// Verifica se a chave é suficientemente longa (pelo menos 256 bits) e cria um objeto 
-        /// <see cref="SigningCredentials"/> usando a chave e o algoritmo HMAC SHA-256.
-        /// </summary>
-        /// <returns>Um objeto <see cref="SigningCredentials"/> configurado para assinatura de tokens JWT.</returns>
-        /// <exception cref="InvalidOperationException">Se a chave HMAC for menor que 256 bits.</exception>
-        SigningCredentials Credentials();
-
-        /// <summary>
         /// Gera um token JWT (Access Token) para um usuário autenticado.
         /// Cria uma lista de Claims com base no ID e no login do usuário, define as credenciais de assinatura com uma chave secreta
         /// e especifica o emissor, público e tempo de expiração do token. Retorna o token JWT gerado.
@@ -36,7 +25,9 @@ namespace WebApiProfissional.Domain.Interfaces.Account
         /// <param name="id">id so usuário que está autenticado</param>
         /// <param name="login">login do usuário</param>
         /// <returns></returns>
-        Task<string> GenerateAccesToken(int id, string login);
+        //Task<string> GenerateAccesToken(int id, string login);
+
+        Task<string> GenerateToken(int userId, string tokenType, string login = null);
 
         /// <summary>
         /// Gera um token JWT (RefreshToken) para um usuário autenticado.

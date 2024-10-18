@@ -18,39 +18,28 @@ using WebApiProfissional.Domain.Interfaces.Repository;
 
 namespace WebApiProfissional.WebApi.Controllers
 {
+    /// <summary>
+    /// Inicializa uma nova instância da classe <see cref="UsuariosController"/> com os serviços necessários.
+    /// </summary>
+    /// <param name="logger">O logger para registrar mensagens de log.</param>
+    /// <param name="usuario">A lógica de negócios relacionada aos usuários.</param>
+    /// <param name="authenticate">O serviço de autenticação para verificar e gerar tokens.</param>
+    /// <param name="refreshToken">O repositório para manipulação dos Refresh Tokens.</param>
     [Route("api/[controller]")]
     [ApiController]
     /// <summary>
     /// Controlador para operações relacionadas aos usuários, incluindo registro, login, atualização de senha, 
     /// renovação de tokens e logout. Protege endpoints com autenticação e gerencia a geração e revogação de tokens.
     /// </summary>
-    public class UsuariosController : ControllerBase
+    public class UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken, IHttpContextAccessor httpContextAccessor, IAuthorized authorized, IValidator<NewUsuarioInput> registerValidator) : ControllerBase
     {
-        private readonly ILogger<UsuariosController> _logger;
-        private readonly IUsuarioLogic _usuario;
-        private readonly IAuthenticate _authenticate;
-        private readonly IRefreshTokenRepository _refreshToken;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IAuthorized _authorized;
-        private readonly IValidator<NewUsuarioInput> _registerValidator;
-
-        /// <summary>
-        /// Inicializa uma nova instância da classe <see cref="UsuariosController"/> com os serviços necessários.
-        /// </summary>
-        /// <param name="logger">O logger para registrar mensagens de log.</param>
-        /// <param name="usuario">A lógica de negócios relacionada aos usuários.</param>
-        /// <param name="authenticate">O serviço de autenticação para verificar e gerar tokens.</param>
-        /// <param name="refreshToken">O repositório para manipulação dos Refresh Tokens.</param>
-        public UsuariosController(ILogger<UsuariosController> logger, IUsuarioLogic usuario, IAuthenticate authenticate, IRefreshTokenRepository refreshToken, IHttpContextAccessor httpContextAccessor, IAuthorized authorized, IValidator<NewUsuarioInput> registerValidator)
-        {
-            _logger = logger;
-            _usuario = usuario;
-            _authenticate = authenticate;
-            _refreshToken = refreshToken;
-            _httpContextAccessor = httpContextAccessor;
-            _authorized = authorized;
-            _registerValidator = registerValidator;
-        }
+        private readonly ILogger<UsuariosController> _logger = logger;
+        private readonly IUsuarioLogic _usuario = usuario;
+        private readonly IAuthenticate _authenticate = authenticate;
+        private readonly IRefreshTokenRepository _refreshToken = refreshToken;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly IAuthorized _authorized = authorized;
+        private readonly IValidator<NewUsuarioInput> _registerValidator = registerValidator;
 
         /// <summary>
         /// Registra um novo usuário. Gera um Access Token e um Refresh Token após a criação do usuário.
@@ -81,7 +70,7 @@ namespace WebApiProfissional.WebApi.Controllers
                     if (usuario is null)
                         return BadRequest("Ocorreu um erro ao cadastrar");
 
-                    var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
+                    var accesToken = await _authenticate.GenerateToken(usuario.Id, "at+jwt", usuario.Login);
                     var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
 
                     return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
@@ -122,7 +111,7 @@ namespace WebApiProfissional.WebApi.Controllers
                 return Unauthorized("A senha é inválida");
 
             var usuario = await _usuario.GetUserByLoginAsync(model.Login);
-            var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
+            var accesToken = await _authenticate.GenerateToken(usuario.Id, "at+jwt", usuario.Login);
             var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
 
             return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
@@ -161,7 +150,7 @@ namespace WebApiProfissional.WebApi.Controllers
             if (usuario is null)
                 return BadRequest("Ocorreu um erro ao atualizar");
 
-            var accesToken = await _authenticate.GenerateAccesToken(usuario.Id, usuario.Login);
+            var accesToken = await _authenticate.GenerateToken(usuario.Id, "at+jwt", usuario.Login);
             var refreshToken = await _authenticate.GenerateRefreshToken(usuario.Id);
 
             return new UserToken(accesToken, refreshToken, usuario.IsAdmin);
@@ -206,7 +195,7 @@ namespace WebApiProfissional.WebApi.Controllers
                 return Unauthorized("Usuário não encontrado.");
 
             // Gera novos tokens
-            var newAccessToken = await _authenticate.GenerateAccesToken(user.Id, user.Login);
+            var newAccessToken = await _authenticate.GenerateToken(user.Id, "at+jwt", user.Login);
             var newRefreshToken = await _authenticate.GenerateRefreshToken(user.Id);
 
             // Revoga o RefreshToken antigo
@@ -257,7 +246,7 @@ namespace WebApiProfissional.WebApi.Controllers
                 return Unauthorized("Usuário não encontrado.");
 
             // Gera novos tokens
-            var newAccessToken = await _authenticate.GenerateAccesToken(user.Id, user.Login);
+            var newAccessToken = await _authenticate.GenerateToken(user.Id, "at+jwt", user.Login);
             var newRefreshToken = await _authenticate.GenerateRefreshToken(user.Id);
 
             // Revoga o RefreshToken antigo

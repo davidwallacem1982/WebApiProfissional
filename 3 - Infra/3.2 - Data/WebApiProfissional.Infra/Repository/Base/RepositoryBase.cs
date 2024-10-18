@@ -15,16 +15,14 @@ namespace WebApiProfissional.Infra.Repository.Base
     /// no banco de dados.
     /// </summary>
     /// <typeparam name="T">O tipo de entidade que este repositório gerencia.</typeparam>
-    public class RepositoryBase<T> : IDisposable, IRepositoryBase<T> where T : class
+    /// <remarks>
+    /// Inicializa uma nova instância do repositório com o contexto fornecido.
+    /// </remarks>
+    /// <param name="context">O contexto do banco de dados utilizado pelo repositório.</param>
+    /// <exception cref="ArgumentNullException">Lançada quando o contexto é nulo.</exception>
+    public class RepositoryBase<T>(IntegrationContext context) : IDisposable, IRepositoryBase<T> where T : class
     {
-        private readonly IntegrationContext context;
-
-        /// <summary>
-        /// Inicializa uma nova instância do repositório com o contexto fornecido.
-        /// </summary>
-        /// <param name="context">O contexto do banco de dados utilizado pelo repositório.</param>
-        /// <exception cref="ArgumentNullException">Lançada quando o contexto é nulo.</exception>
-        public RepositoryBase(IntegrationContext context) => this.context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly IntegrationContext context = context ?? throw new ArgumentNullException(nameof(context));
 
         #region Métodos Síncronos
 

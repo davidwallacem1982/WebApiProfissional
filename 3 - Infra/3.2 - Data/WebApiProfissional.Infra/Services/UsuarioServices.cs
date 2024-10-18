@@ -8,16 +8,10 @@ using System.Threading.Tasks;
 
 namespace WebApiProfissional.Infra.Services
 {
-    public class UsuarioServices : IUsuarioServices
+    public class UsuarioServices(ILogger<UsuarioServices> logger, IUsuarioRepository usuario) : IUsuarioServices
     {
-        private readonly ILogger<UsuarioServices> _logger;
-        private readonly IUsuarioRepository _usuario;
-
-        public UsuarioServices(ILogger<UsuarioServices> logger, IUsuarioRepository usuario)
-        {
-            _logger = logger;
-            _usuario = usuario;
-        }
+        private readonly ILogger<UsuarioServices> _logger = logger;
+        private readonly IUsuarioRepository _usuario = usuario;
 
         public bool SelectExistByLogin(string login)
         {

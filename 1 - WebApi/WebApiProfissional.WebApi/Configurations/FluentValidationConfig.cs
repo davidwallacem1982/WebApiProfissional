@@ -17,7 +17,7 @@ namespace WebApiProfissional.WebApi.Configurations
         /// <exception cref="ArgumentNullException">Lançado quando a coleção de serviços é <c>null</c>.</exception>
         public static void AddFluentValidationConfiguration(this IServiceCollection services)
         {
-            if (services == null) throw new ArgumentNullException(nameof(services));
+            ArgumentNullException.ThrowIfNull(services);
 
             services.AddValidatorsFromAssemblyContaining<RegisterFuncionarioValidator>();
             services.AddValidatorsFromAssemblyContaining<RegisterUsuarioValidator>();

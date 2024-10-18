@@ -12,21 +12,15 @@ namespace WebApiProfissional.Services.Logic
     /// Classe responsável pela lógica de operações relacionadas a usuários.
     /// Implementa a interface <see cref="IUsuarioLogic"/>.
     /// </summary>
-    public class UsuarioLogic : IUsuarioLogic
+    /// <remarks>
+    /// Construtor da classe <see cref="UsuarioLogic"/>. Inicializa o logger e os serviços relacionados a usuários.
+    /// </remarks>
+    /// <param name="logger">Instância do logger para registrar informações.</param>
+    /// <param name="usuario">Serviço responsável pelas operações de usuário.</param>
+    public class UsuarioLogic(ILogger<UsuarioLogic> logger, IUsuarioServices usuario) : IUsuarioLogic
     {
-        private readonly ILogger<UsuarioLogic> _logger;
-        private readonly IUsuarioServices _usuario;
-
-        /// <summary>
-        /// Construtor da classe <see cref="UsuarioLogic"/>. Inicializa o logger e os serviços relacionados a usuários.
-        /// </summary>
-        /// <param name="logger">Instância do logger para registrar informações.</param>
-        /// <param name="usuario">Serviço responsável pelas operações de usuário.</param>
-        public UsuarioLogic(ILogger<UsuarioLogic> logger, IUsuarioServices usuario)
-        {
-            _logger = logger;
-            _usuario = usuario;
-        }
+        private readonly ILogger<UsuarioLogic> _logger = logger;
+        private readonly IUsuarioServices _usuario = usuario;
 
         public bool UserExistByLogin(string login) => _usuario.SelectExistByLogin(login);
 
