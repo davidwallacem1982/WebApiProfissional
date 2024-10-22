@@ -94,7 +94,7 @@ namespace WebApiProfissional.Infra.Identity
                 issuer: issuer,
                 audience: audience,
                 claims: identityClaims.Claims,
-                expires: DateTime.UtcNow.AddDays(7), // O Refresh Token geralmente tem um período de validade mais longo
+                expires: DateTime.UtcNow.AddDays(1), // O Refresh Token geralmente tem um período de validade mais longo
                 signingCredentials: credentials
             );
 
@@ -102,125 +102,6 @@ namespace WebApiProfissional.Infra.Identity
             return await Task.FromResult(new JwtSecurityTokenHandler().WriteToken(securityToken));
         }
 
-
-        public async Task<string> GenerateRefreshToken(int id)
-        {
-            var refreshToken = await GenerateToken(id, "rt+jwt");
-            await StoreRefreshToken(id, refreshToken, Guid.NewGuid().ToString(), DateTime.UtcNow.AddDays(1)); // Tempo de expiração ajustável
-            return refreshToken;
-        }
-
-        public async Task StoreRefreshToken(int id, string refreshToken, string jti, DateTime expiresAt)
-        {
-            // Obtém o usuário pelo email
-            var user = await _usuario.GetSingleOrDefaultAsyncBy(u => u.Id == id) ?? throw new InvalidOperationException("O Usuário não encontrado");
-            if (user != null)
-            {
-                // Insere um novo token na tabela RefreshTokens
-                var newToken = new RefreshTokens
-                {
-                    IdUsuario = user.Id,
-                    Token = refreshToken,
-                    JwtId = jti,
-                    ExpiresAt = expiresAt
-                };
-                _refreshToken.Add(newToken);
-                await _refreshToken.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("Usuário não encontrado.");
-            }
-        }
-
-        public async Task WithoutRevokeRefreshToken(string login, string jti)
-        {
-            // Obtém o usuário pelo email
-            var user = await _usuario.GetSingleOrDefaultAsyncBy(u => u.Login == login);
-            if (user != null)
-            {
-                // Revoga o token correspondente ao Jti
-                var token = await _refreshToken
-                    .GetSingleOrDefaultAsyncBy(rt => rt.IdUsuario == user.Id && rt.JwtId == jti);
-
-                if (token != null)
-                {
-                    token.IsRevoked = true;
-                    token.RevokedAt = DateTime.UtcNow;
-
-                    await _refreshToken.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                throw new Exception("Usuário não encontrado.");
-            }
-        }
-
-        public async Task WithRevokeRefreshToken(string Login, string jti)
-        {
-            // Obtém o usuário pelo email
-            var user = await _usuario.GetSingleOrDefaultAsyncBy(u => u.Login == Login);
-            if (user != null)
-            {
-                // Revoga o token correspondente ao Jti
-                var token = await _refreshToken
-                    .GetSingleOrDefaultAsyncBy(rt => rt.IdUsuario == user.Id && rt.JwtId == jti);
-
-                if (token != null)
-                {
-                    // Grava o token revogado na tabela RevokedTokens
-                    var revokedToken = new RevokedTokens
-                    {
-                        IdUsuario = user.Id,
-                        Token = token.Token,
-                        RevokedAt = DateTime.UtcNow
-                    };
-
-                    _revokedToken.Add(revokedToken);
-                    await _revokedToken.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                throw new Exception("Usuário não encontrado.");
-            }
-        }
-
-        public async Task<bool> IsTokenRevoked(string token)
-        {
-            // Verifica se o token está na tabela RevokedTokens
-            return await _refreshToken.ExistAsync(rt => rt.Token == token);// Retorna true se o token estiver revogado
-        }
-
-        public async Task RevokeRefreshToken(int userId, string refreshToken)
-        {
-            // Obtém o Refresh Token correspondente ao token fornecido
-            var token = await _refreshToken.GetSingleOrDefaultAsyncBy(rt => rt.IdUsuario == userId && rt.Token == refreshToken);
-
-            if (token != null)
-            {
-                // Marca o Refresh Token como revogado
-                token.IsRevoked = true;
-                token.RevokedAt = DateTime.UtcNow;
-
-                // Atualiza a tabela de Refresh Tokens
-                await _refreshToken.SaveChangesAsync();
-
-                // Grava o token revogado na tabela RevokedTokens
-                var revokedToken = new RevokedTokens
-                {
-                    IdUsuario = userId,
-                    Token = refreshToken,
-                    RevokedAt = DateTime.UtcNow
-                };
-                _revokedToken.Add(revokedToken);
-                await _revokedToken.SaveChangesAsync();
-            }
-            else
-            {
-                throw new InvalidOperationException("Refresh Token não encontrado.");
-            }
-        }
+        public async Task<string> GenerateRefreshToken(int id) => await GenerateToken(id, "rt+jwt");
     }
 }

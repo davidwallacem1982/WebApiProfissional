@@ -9,10 +9,7 @@ namespace WebApiProfissional.Utils
         /// </summary>
         /// <param name="dado">A string da qual os caracteres não numéricos serão removidos.</param>
         /// <returns>A string resultante contendo apenas caracteres numéricos.</returns>
-        public static string RemoverCaracteresNaoNumericos(string dado)
-        {
-            return Regex.Replace(dado, @"\D", "");
-        }
+        public static string RemoverCaracteresNaoNumericos(string dado) => Regex.Replace(dado, @"\D", "");
 
         /// <summary>
         /// Verifica se a string fornecida é nula ou vazia.
@@ -125,7 +122,7 @@ namespace WebApiProfissional.Utils
             string[] palavras = nomeCompleto.Split(' ');
 
             // Palavras que não devem ser capitalizadas
-            string[] palavrasNaoCapitalizadas = { "da", "de", "do", "das", "dos" }; // Adicione outras palavras conforme necessário
+            string[] palavrasNaoCapitalizadas = ["da", "de", "do", "das", "dos"]; // Adicione outras palavras conforme necessário
 
             // Capitaliza o primeiro caractere de cada palavra, exceto as palavras não capitalizadas
             for (int i = 0; i < palavras.Length; i++)
@@ -155,23 +152,14 @@ namespace WebApiProfissional.Utils
         /// <returns>A string formatada de acordo com o tipo especificado.</returns>
         public static string FormatDateOrHour(DateTime date, int tipo)
         {
-            switch (tipo)
+            return tipo switch
             {
-                case 0:
-                    return date.ToString("dd/MM/yyyy");
-
-                case 1:
-                    return date.ToString("dd-MM-yyyy");
-
-                case 2:
-                    return date.ToString("HH:mm");
-
-                case 3:
-                    return date.ToString("dd/MM/yyyy HH:mm");
-
-                default:
-                    return date.ToString();
-            }
+                0 => date.ToString("dd/MM/yyyy"),
+                1 => date.ToString("dd-MM-yyyy"),
+                2 => date.ToString("HH:mm"),
+                3 => date.ToString("dd/MM/yyyy HH:mm"),
+                _ => date.ToString(),
+            };
         }
 
         /// <summary>
@@ -194,10 +182,7 @@ namespace WebApiProfissional.Utils
         /// <param name="errorMessage">A mensagem de erro a ser registrada.</param>
         /// <param name="ex">A exceção que foi lançada.</param>
         /// <returns>False, indicando que a exceção foi registrada, mas não há tratamento adicional.</returns>
-        public static bool HandleException(string errorMessage, Exception ex)
-        {
-            return false;
-        }
+        public static bool HandleException(string errorMessage, Exception ex) => false;
 
         /// <summary>
         /// Cria uma string de descrição para uma exceção de banco de dados.

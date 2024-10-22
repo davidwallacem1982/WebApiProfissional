@@ -39,59 +39,5 @@ namespace WebApiProfissional.Domain.Interfaces.Account
         /// <param name="login">login do usuário</param>
         /// <returns></returns>
         Task<string> GenerateRefreshToken(int id);
-
-        /// <summary>
-        /// Armazena um RefreshToken na base de dados associado ao usuário.
-        /// Obtém o usuário pelo login, cria um novo registro de Refresh Token contendo o token, JTI e data de expiração,
-        /// e insere-o na tabela de RefreshTokens.
-        /// </summary>
-        /// <param name="login">Login do usuário</param>
-        /// <param name="refreshToken">a Refresh Token a ser armazenado.</param>
-        /// <param name="jti">identificador único do token</param>
-        /// <param name="expiresAt">data de expiração</param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="Exception"></exception>
-        Task StoreRefreshToken(int id, string refreshToken, string jti, DateTime expiresAt);
-
-        /// <summary>
-        /// Revoga um Refresh Token correspondente ao identificador único (JTI) para um usuário específico.
-        /// Obtém o usuário pelo login, busca o token associado ao JTI fornecido e marca o token como revogado, 
-        /// atualizando a data de revogação na base de dados.
-        /// </summary>
-        /// <param name="login">Login do usuário</param>
-        /// <param name="jti">identificador único do token</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        Task WithoutRevokeRefreshToken(string Login, string jti);
-
-        /// <summary>
-        /// Revoga um Refresh Token correspondente ao identificador único (JTI) para um usuário específico.
-        /// Obtém o usuário pelo login, busca o token associado ao JTI fornecido e grava o token revogado na tabela RevokedTokens,
-        /// registrando a data de revogação na base de dados.
-        /// </summary>
-        /// <param name="Login">Login do usuário</param>
-        /// <param name="jti">identificador único do token</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        Task WithRevokeRefreshToken(string Login, string jti);
-
-        /// <summary>
-        /// Verifica se um token específico foi revogado.
-        /// Consulta a tabela RefreshTokens para determinar se o token fornecido está marcado como revogado.
-        /// Retorna verdadeiro se o token estiver revogado, caso contrário, retorna falso.
-        /// </summary>
-        /// <param name="token">O Token a ser verificado.</param>
-        /// <returns></returns>
-        Task<bool> IsTokenRevoked(string token);
-
-        /// <summary>
-        /// Revoga o Refresh Token fornecido e o marca como revogado na tabela de Refresh Tokens.
-        /// Também adiciona um registro na tabela RevokedTokens para manter o histórico de revogações.
-        /// </summary>
-        /// <param name="userId">O ID do usuário associado ao Refresh Token.</param>
-        /// <param name="refreshToken">O Refresh Token a ser revogado.</param>
-        /// <exception cref="InvalidOperationException">Se o Refresh Token não for encontrado.</exception>
-        Task RevokeRefreshToken(int userId, string refreshToken);
     }
 }

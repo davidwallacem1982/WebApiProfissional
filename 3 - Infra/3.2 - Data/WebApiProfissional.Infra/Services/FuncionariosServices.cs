@@ -12,16 +12,10 @@ using System.Threading.Tasks;
 
 namespace WebApiProfissional.Infra.Services
 {
-    public class FuncionariosServices : IFuncionariosServices
+    public class FuncionariosServices(ILogger<FuncionariosServices> logger, IFuncionariosRepository funcionarios) : IFuncionariosServices
     {
-        private readonly ILogger<FuncionariosServices> _logger;
-        private readonly IFuncionariosRepository _funcionarios;
-
-        public FuncionariosServices(ILogger<FuncionariosServices> logger, IFuncionariosRepository funcionarios)
-        {
-            _logger = logger;
-            _funcionarios = funcionarios;
-        }
+        private readonly ILogger<FuncionariosServices> _logger = logger;
+        private readonly IFuncionariosRepository _funcionarios = funcionarios;
 
         public Funcionarios SelectFuncionariosById(int id)
         {
@@ -56,7 +50,7 @@ namespace WebApiProfissional.Infra.Services
 
             try
             {
-                result = _funcionarios.GetList().ToList();
+                result = [.. _funcionarios.GetList()];
 
             }
             catch (Exception ex)

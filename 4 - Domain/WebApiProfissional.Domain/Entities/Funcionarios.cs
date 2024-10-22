@@ -15,10 +15,7 @@ namespace WebApiProfissional.Domain.Entities
     [MySqlCollation("utf8mb4_0900_ai_ci")]
     public partial class Funcionarios
     {
-        public Funcionarios()
-        {
-            Usuarios = new HashSet<Usuarios>();
-        }
+        public Funcionarios() => Usuarios = new HashSet<Usuarios>();
 
         [Key]
         public int Id { get; set; }
